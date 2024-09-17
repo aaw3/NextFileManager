@@ -1,2 +1,2 @@
-# simple-file-uploader
+# next-file-uploader
 
