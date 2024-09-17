@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 const RegisterPage = () => {
   return (
     <section class="bg-gray-50 dark:bg-gray-900">
@@ -100,12 +101,12 @@ const RegisterPage = () => {
               </button>
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   class="font-medium text-blue-600 hover:underline dark:text-blue-500"
                 >
                   Login here
-                </a>
+                </Link>
               </p>
             </form>
           </div>

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 const LoginPage = () => {
   return (
     <section class="bg-gray-50 h-full dark:bg-gray-900">
@@ -86,12 +87,12 @@ const LoginPage = () => {
               </button>
               <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
-                <a
-                  href="#"
+                <Link
+                  to="/register"
                   class="font-medium text-blue-600 hover:underline dark:text-blue-500"
                 >
                   Sign up
-                </a>
+                </Link>
               </p>
             </form>
           </div>
