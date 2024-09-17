@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    
+    color: #121212;
+}
+h1 {
+    font-size: 24px;
+    color: #121212;
+}
+#UI_goUp a {
+    text-decoration: none;
+    color: #007BFF;
+}
+#UI_goUp a:hover {
+    text-decoration: underline;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 8px 12px;
+}
+th {
+    text-align: start;
+    white-space: nowrap;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
+}
+th > a {
+    color: inherit;
+}
+table[order] > thead > tr > th {
+    cursor: pointer;
+}
+table[order] > thead > tr > th::after {
+    display: none;
+    width: .8em;
+    margin-inline-end: -.8em;
+    text-align: end;
+}
+table.remove-hidden > tbody > tr.hidden-object {
+    display: none;
+}
+td {
+    white-space: nowrap;
+    border-bottom: 1px solid #333;
+}
+td a {
+    text-decoration: none;
+    color: #3391ff;
+}
+td a:hover {
+    text-decoration: underline;
+}
+.directory {
+    font-weight: bold;
+}
+:root {
+    font-family: sans-serif;
+}
+img {
+    border: 0;
+    padding-inline-end: 10px;
+}
+.symlink {
+    font-style: italic;
+}
+.dir ,
+.symlink ,
+.directory ,
+.file {
+    margin-inline-start: 20px;
+}

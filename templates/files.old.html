@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+    <style>
+        ul {
+            list-style-type: none; /* Remove bullets */
+            padding: 0; /* Remove padding */
+        }
+        li {
+            margin: 5px 0; /* Add some spacing between items */
+        }
+        a {
+            text-decoration: none; /* Remove underline from links */
+            color: #007BFF; /* Change link color */
+        }
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+</head>
+<body>
+    <ul>
+    {% for file in files %}
+        <li>
+            <a href="{{ (request.path + '/' if request.path != '/' else '') + file }}">
+                {{ file }}
+            </a>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>

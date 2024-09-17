@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Viewer</title>
+    <link rel="stylesheet" href="{{ get_styling_path('css/files.css') }}">
+    <link rel="preload" href="{{ get_styling_path('folder_prev.png') }}" as="image">
+    <link rel="preload" href="{{get_styling_path('img/folder_.png') }}" as="image">
+    <link rel="preload" href="{{ get_styling_path('img/file.png') }}" as="image">
+</head>
+<body>
+    <h1>Index of {{ path or '/' }}</h1>
+    <p id="UI_goUp">
+        <a href="{{ url_for('view_files', req_path='/'.join(path.split('/')[:-1])) if path else '/' }}">
+            <img src={{ get_styling_path('img/folder_prev.png') }} alt="Folder Icon">Go back</a>
+    </p>
+    <table order="">
+        <thead>
+            <tr>
+                <th><a href="#">Name</a></th>
+                <th><a href="#">Size</a></th>
+                <th colspan="2"><a href="#">Last Modified</a></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for directory in dirs %}
+                <tr>
+                    <td class="directory"><a href="{{ url_for('view_files', req_path=path + '/' + directory['name']) }}"><img src={{ get_styling_path('img/folder.png') }} alt="Directory">{{ directory['name'] }}</a></td>
+                    <td></td>
+                    <td>{{ directory['mtime']|datetimeformat }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+            {% for file in files %}
+                <tr>
+                    <td class="file"><a href="{{ url_for('view_files', req_path=path + '/' + file['name']) }}"><img src={{ get_styling_path('img/file.png') }} alt="File">{{ file['name'] }}</a></td>
+                    <td>{{ file['size'] }}</td>
+                    <td>{{ file['mtime']|datetimeformat }}</td>
+                    <td></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

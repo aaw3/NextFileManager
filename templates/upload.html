@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <title>Upload Files</title>
+    <script>
+        function uploadFiles(event) {
+            event.preventDefault();
+            var form = document.getElementById('upload-form');
+            var formData = new FormData(form);
+            var path = document.getElementById('path').value || '.';
+
+            // Remove the original file inputs from FormData
+            formData.delete('temp_upload_files');
+
+            // Append the path to the form data
+            formData.append('path', path);
+
+            // Append files with the path to the FormData
+            var fileInput = document.querySelector('input[type="file"]');
+            var files = fileInput.files;
+            for (var i = 0; i < files.length; i++) {
+                formData.append(path, files[i]);
+            }
+
+            var xhr = new XMLHttpRequest();
+            var startTime = new Date().getTime();
+
+            // Make progress bar, percentage, and time remaining visible
+            document.getElementById('progress-bar').style.visibility = 'visible';
+            document.getElementById('progress-percent').style.visibility = 'visible';
+            document.getElementById('time-remaining').style.visibility = 'visible';
+
+            xhr.upload.addEventListener('progress', function(e) {
+                var percent = e.loaded / e.total * 100;
+                document.getElementById('progress-bar').value = percent;
+                document.getElementById('progress-percent').innerText = percent.toFixed(2) + '%';
+
+                var elapsedTime = (new Date().getTime() - startTime) / 1000; // seconds
+                var remainingTime = ((e.total - e.loaded) / e.loaded) * elapsedTime; // seconds
+                document.getElementById('time-remaining').innerText = 'Time remaining: ' + remainingTime.toFixed(2) + ' seconds';
+            });
+
+            xhr.addEventListener('load', function() {
+                if (xhr.status == 200) {
+                    alert('Files uploaded successfully!');
+                } else {
+                    alert('Failed to upload files!');
+                }
+            });
+
+            xhr.open('POST', '/upload_file');
+            xhr.send(formData);
+        }
+    </script>
+    <style>
+        #progress-bar, #progress-percent, #time-remaining {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Files</h1>
+    <form id="upload-form" method="POST" action="/upload_file" enctype="multipart/form-data" onsubmit="uploadFiles(event)">
+        <input type="file" name="temp_upload_files" multiple><br>
+        <input type="text" id="path" name="path" placeholder="Enter path or leave empty for root"><br>
+        <input type="submit" value="Upload">
+    </form>
+    <progress id="progress-bar" max="100" value="0"></progress>
+    <span id="progress-percent">0%</span><br>
+    <span id="time-remaining">Time remaining: calculating...</span>
+    {% for message in get_flashed_messages() %}
+        <p>{{ message }}</p>
+    {% endfor %}
+</body>
+</html>
