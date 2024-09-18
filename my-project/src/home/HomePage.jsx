@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import BreadCrumb from "../components/BreadCrumb";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
@@ -21,25 +22,26 @@ const HomePage = () => {
                 {
                   title: "S24 YC Schedule",
                   desc: "You recently opened this",
-                  action: "Open",
+                  filename: "S24-ycschedule.docx",
                 },
                 {
                   title: "YC Shoe Size",
                   desc: "You edited this",
-                  action: "Open",
+                  filename: "S24-ycshoesize.docx",
                 },
                 {
                   title: "Weekly Draft Emails",
                   desc: "You edited this",
-                  action: "Open",
+                  filename: "S24-weeklydraftemails.docx",
                 },
                 {
                   title: "YCT Notes 2024",
                   desc: "You edited this",
-                  action: "Open",
+                  filename: "S24-ycnotes2024.docx",
                 },
               ].map((file, index) => (
-                <div
+                <Link
+                  //to={`/editor/${file.filename}`}
                   key={index}
                   className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800"
                 >
@@ -47,10 +49,7 @@ const HomePage = () => {
                     {file.title}
                   </h3>
                   <p className="text-xs mb-4 dark:text-gray-400">{file.desc}</p>
-                  <button className="text-blue-500 hover:underline">
-                    {file.action}
-                  </button>
-                </div>
+                </Link>
               ))}
             </div>
           </section>
