@@ -2,3 +2,4 @@ werkzeug
 flask
 gunicorn
 fastapi[standard]
+pyests
