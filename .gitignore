@@ -3,6 +3,7 @@ uploads/
 .vscode/
 my-project/node_modules/
 my-project/.vite/
+.pytest_cache/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
