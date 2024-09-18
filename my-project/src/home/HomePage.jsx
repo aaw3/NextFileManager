@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import BreadCrumb from "../components/BreadCrumb";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import ButtonGroup from "../components/ButtonGroup";
 
 const HomePage = () => {
   return (
@@ -57,9 +58,7 @@ const HomePage = () => {
             <div className="mb-4 flex justify-between items-center">
               <h2 className="text-xl font-bold dark:text-white">Recent</h2>
               <div>
-                <button className="text-sm border border-gray-300 py-1 px-3 rounded-lg dark:border-gray-600 dark:text-gray-300">
-                  Filter
-                </button>
+                <ButtonGroup />
               </div>
             </div>
             <div className="overflow-auto">
