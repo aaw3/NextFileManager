@@ -1,5 +1,6 @@
 # Custom
 uploads/
+.vscode/
 my-project/node_modules/
 my-project/.vite/
 
