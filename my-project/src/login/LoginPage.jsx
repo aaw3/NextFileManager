@@ -17,7 +17,6 @@ const LoginPage = () => {
           NextFileManager
         </a>
         <Login />
-        <OIDCProvider />
       </div>
     </section>
   );
