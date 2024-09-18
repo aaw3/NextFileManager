@@ -1,6 +1,7 @@
 # Custom
 uploads/
 my-project/node_modules/
+my-project/.vite/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
