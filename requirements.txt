@@ -1,5 +1,4 @@
 werkzeug
 flask
 gunicorn
-yaml
 fastapi[standard]
