@@ -2,4 +2,4 @@ werkzeug
 flask
 gunicorn
 fastapi[standard]
-pyest
+pytest
