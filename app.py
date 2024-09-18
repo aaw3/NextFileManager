@@ -13,14 +13,15 @@ from tools.requests import response, not_found
 from tools.config import flask_config, server_config
 import tools.config
 
-app = Flask(__name__, subdomain_matching=True)
+app = Flask(__name__, subdomain_matching=False)
 #app.config.from_object('config.Config')
 app.config.update(flask_config)
-SERVER_NAME = try_get_config_value(server_config, 'DOMAIN_NAME') + ':' + str(try_get_config_value(server_config, 'PORT'))
-app.config['SERVER_NAME'] = SERVER_NAME
+#SERVER_NAME = try_get_config_value(server_config, 'DOMAIN_NAME') + ':' + str(try_get_config_value(server_config, 'PORT'))
+#app.config['SERVER_NAME'] = SERVER_NAME
 
 safe_dir = os.path.abspath(try_get_config_value(server_config, 'UPLOAD_FOLDER', 'uploads'))
 styling_dir = try_get_config_value(server_config, 'STYLING_FOLDER', 'styling')
+
 
 
 @app.template_filter('datetimeformat')
@@ -30,9 +31,14 @@ def datetimeformat(value):
 # Register the filter
 app.jinja_env.filters['datetimeformat'] = datetimeformat
 
-@app.route('/', methods=['GET'], subdomain=try_get_config_value(server_config, 'VIEW_SUBDOMAIN'), defaults={'req_path': ''})
-@app.route('/<path:req_path>', methods=['GET'], subdomain=try_get_config_value(server_config, 'VIEW_SUBDOMAIN'))
+@app.route('/', methods=['GET'])
+def index():
+    return redirect(url_for('view_files', req_path=''))
+
+@app.route('/view', methods=['GET'], defaults={'req_path': ''})
+@app.route('/view/<path:req_path>', methods=['GET'])
 def view_files(req_path):
+
     base_dir = os.path.abspath(try_get_config_value(server_config,'UPLOAD_FOLDER'))
     abs_path = os.path.join(base_dir, req_path)
 
@@ -84,26 +90,26 @@ def view_files(req_path):
     return render_template('files.html', files=sorted(files, key=lambda x: x['name']),
                            dirs=sorted(dirs, key=lambda x: x['name']), path=req_path, get_styling_path=get_styling_path)
 
-@app.route('/', methods=['GET'], subdomain=try_get_config_value(server_config,'UPLOAD_SUBDOMAIN'))
+@app.route('/upload', methods=['GET'])
 def upload_file():
     return render_template('upload.html')
     
-@app.route('/delete/<path:delete_path>', methods=['GET'], subdomain=try_get_config_value(server_config,'DELETE_SUBDOMAIN'))
-def delete_file_from_get(delete_path):
-    return delete_file([delete_path], request_type='GET')
+#@app.route('/delete/<path:delete_path>', methods=['GET'])
+#def delete_file_from_get(delete_path):
+#    return delete_file([delete_path], request_type='GET')
 
 # Would need to get the path from path value in form
-@app.route('/delete', methods=['POST'], subdomain=try_get_config_value(server_config,'DELETE_SUBDOMAIN'))
+@app.route('/delete', methods=['POST'])
 def delete_file_from_post():
     delete_paths = get_values_from_form('path')
 
     return delete_file(delete_paths, request_type='POST')
 
-@app.route('/delete_dir/<path:delete_path>', methods=['GET'], subdomain=try_get_config_value(server_config,'DELETE_SUBDOMAIN'))
-def delete_directory_from_get(delete_path):
-    return delete_directory([delete_path], request_type='GET')
+#@app.route('/delete_dir/<path:delete_path>', methods=['GET'])
+#def delete_directory_from_get(delete_path):
+#    return delete_directory([delete_path], request_type='GET')
 
-@app.route('/delete_dir', methods=['POST'], subdomain=try_get_config_value(server_config,'DELETE_SUBDOMAIN'))
+@app.route('/delete_dir', methods=['POST'])
 def delete_directory_from_post():
     delete_paths = get_values_from_form('path')
 
@@ -111,9 +117,10 @@ def delete_directory_from_post():
 
 
 
-@app.route('/' + try_get_config_value(server_config,'STYLING_PATH') + '/<path:file_path>', methods=['GET'], subdomain=try_get_config_value(server_config,'VIEW_SUBDOMAIN'))
+@app.route('/' + try_get_config_value(server_config,'STYLING_PATH') + '/<path:file_path>', methods=['GET'])
 def get_styling_file(file_path):
     path = os.path.abspath(styling_dir + '/' + file_path)
+    print(path + " : " + str(is_safe_path(path, safe_dir)))
     if is_safe_path(path, safe_dir=os.path.abspath(styling_dir)) and os.path.exists(path) and not os.path.isdir(path):
         return send_file(path)
     return not_found()
@@ -121,7 +128,7 @@ def get_styling_file(file_path):
 
 
 
-@app.route('/upload', methods=['POST'], subdomain=try_get_config_value(server_config,'UPLOAD_SUBDOMAIN'))
+@app.route('/upload', methods=['POST'])
 def handle_file_upload():
     files = request.files.to_dict(flat=False)
     print("Received files:", files.items())

@@ -3,9 +3,9 @@ VIEW_DIRECTORIES: True # Should be replaced with 'IsUserAuthenticated' or 'IsUse
 UPLOAD_CHUNK_SIZE: 64 * 1024 #64 KB
 DOMAIN_NAME: 'example.com' # Domain name
 PORT: 8080 # Port to run on
-UPLOAD_SUBDOMAIN: 'upload' # Subdomain for adding files
-DELETE_SUBDOMAIN: 'upload' # Subdomain for deleting files
-VIEW_SUBDOMAIN: 'static' # Subdomain to view static files
+#UPLOAD_SUBDOMAIN: 'upload' # Subdomain for adding files
+#DELETE_SUBDOMAIN: 'upload' # Subdomain for deleting files
+#VIEW_SUBDOMAIN: 'static' # Subdomain to view static files
 STYLING_PATH: '$_styling' # Path to the styling files, allow user to set to prevent restricting specific directories
 STYLING_FOLDER: 'styling' # Folder to store styling files
     
