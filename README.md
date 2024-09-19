@@ -7,7 +7,7 @@
 - users, permissions, scopes support
 - multiple login methods (OIDC, LDAP, Basic Auth, Token)
 - access and browse remotely from your browser or terminal
-- supports services accounts to store files using the API when network shares cannot be mounted
+- support for service accounts to store files using the API when network shares cannot be mounted
 
 ## Features
 - Supports file management through webpage and headless CRUD API
