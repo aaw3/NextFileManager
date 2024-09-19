@@ -1,6 +1,15 @@
 # next-file-uploader
 
-## File Server written in Python using fastapi, Redis, and React supporting OIDC & LDAP
+## Cutting Edge File Server written in Python using fastapi, Redis, and React supporting OIDC & LDAP
+
+# What is it?
+File storing alternative with: 
+- user, permissions, scopes support,
+- multiple login methods (OIDC, LDAP, Basic Auth, Token)
+- access and browse remotely from your browser or terminal
+- supports services accounts to store files using the API when network shares cannot be mounted
+
+## Features
 - Supports file management through webpage and headless CRUD API
 - Uses SQLAlchemy ORM to manage objects in PostgreSQL
 -  Supports Users, Scopes, and Permission Management in the the Admin Interface
