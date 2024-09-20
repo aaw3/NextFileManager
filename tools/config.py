@@ -8,6 +8,7 @@ def load_config(file_path):
 flask_config = load_config('configs/flask.yml')
 server_config = load_config('configs/server.yml')
 users_config = load_config('configs/users.yml')
+auth_config = load_config('configs/auth.yml')
 
 configs = [flask_config, server_config, users_config]
 

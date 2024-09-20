@@ -3,3 +3,5 @@ flask
 gunicorn
 fastapi[standard]
 pytest
+python-ldap
+authlib
