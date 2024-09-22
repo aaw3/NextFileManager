@@ -3,8 +3,10 @@ import React from "react";
 interface RecentFilesTableProps {
   files: {
     name: string;
+    created: string;
     modified: string;
     imagepath: string;
+    mime: string;
   }[];
 }
 

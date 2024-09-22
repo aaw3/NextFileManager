@@ -12,8 +12,10 @@ import RecentFilesGrid from "../components/home/RecentFileGrid";
 
 interface File {
   name: string;
+  created: string;
   modified: string;
   imagepath: string;
+  mime: string;
 }
 
 interface APIResponse {

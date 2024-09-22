@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 interface FileCardProps {
   file: {
     name: string;
+    created: string;
     modified: string;
     imagepath: string;
+    mime: string;
   };
 }
 
@@ -32,6 +34,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
       <img
         src={file.imagepath || "/images/placeholder.png"}
         className="w-12 h-12 bg-gray-200 dark:bg-gray-600 object-cover rounded-lg"
+        alt={file.name}
       />
       <div className="flex-1">
         <h3
@@ -44,7 +47,8 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
           {formatDate(file.modified)}
         </p>
       </div>
-      <div className="ml-auto">
+      {/* Fixed position and size for the arrow icon */}
+      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
         <i className="material-icons text-gray-600 dark:text-gray-400">
           arrow_forward
         </i>

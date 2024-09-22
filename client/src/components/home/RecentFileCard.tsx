@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 interface RecentFileCardProps {
   file: {
     name: string;
+    created: string;
     modified: string;
     imagepath: string;
+    mime: string;
   };
 }
 const FileCard2: React.FC<RecentFileCardProps> = ({ file }) => {
