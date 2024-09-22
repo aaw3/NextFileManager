@@ -6,8 +6,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["react", "react-dom", "node", "history", "prop-types"]
   },
-  "include": ["my-project/src/**/*"],
+  "include": ["client/src/**/*"],
   "exclude": ["node_modules", "build"]
 }

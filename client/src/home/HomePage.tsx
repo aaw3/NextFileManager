@@ -11,26 +11,17 @@ import { getFilesFromAPI } from "../data/apiService";
 import RecentFilesGrid from "../components/home/RecentFileGrid";
 
 interface File {
-  title: string;
-  desc: string;
-  filename: string;
-}
-
-interface RecentFile {
   name: string;
-  opened: string;
-  owner: string;
-  activity: string;
+  modified: string;
+  imagepath: string;
 }
 
 interface APIResponse {
   files: File[];
-  recentFiles: RecentFile[];
 }
 
 const HomePage: FC = () => {
   const [files, setFiles] = useState<File[]>([]);
-  const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,16 +30,14 @@ const HomePage: FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result: APIResponse = await getFilesFromAPI();
+        const result = await getFilesFromAPI();
         setFiles(result.files);
-        setRecentFiles(result.recentFiles);
         setLoading(false);
       } catch (error) {
         setError("Failed to fetch data");
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
@@ -89,7 +78,7 @@ const HomePage: FC = () => {
             {view === 1 ? (
               <RecentFilesGrid files={files} />
             ) : (
-              <RecentFilesTable recentFiles={recentFiles} />
+              <RecentFilesTable files={files} />
             )}
           </section>
         </div>

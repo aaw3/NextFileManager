@@ -3,9 +3,9 @@ import FileCard from "./SuggestedFileCard";
 
 interface SuggestedFilesGridProps {
   files: {
-    title: string;
-    desc: string;
-    filename: string;
+    name: string;
+    modified: string;
+    imagepath: string;
   }[];
 }
 
