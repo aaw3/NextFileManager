@@ -1,4 +1,4 @@
-import React, { StrictMode } from "react"; // Ensure React is imported
+import React, { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
