@@ -4,8 +4,10 @@ import FileCard from "./SuggestedFileCard";
 interface SuggestedFilesGridProps {
   files: {
     name: string;
+    created: string;
     modified: string;
     imagepath: string;
+    mime: string;
   }[];
 }
 

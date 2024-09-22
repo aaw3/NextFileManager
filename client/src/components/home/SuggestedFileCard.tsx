@@ -34,7 +34,6 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
       <img
         src={file.imagepath || "/images/placeholder.png"}
         className="w-12 h-12 bg-gray-200 dark:bg-gray-600 object-cover rounded-lg"
-        alt={file.name}
       />
       <div className="flex-1">
         <h3
