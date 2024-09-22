@@ -18,6 +18,9 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
       day: "numeric",
     });
   };
+  const removeFileExtension = (filename: string) => {
+    return filename.replace(/\.[^/.]+$/, "");
+  };
   return (
     <div className="overflow-auto">
       <table className="min-w-full text-sm rounded-lg bg-white dark:bg-gray-800">
@@ -37,7 +40,9 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
             >
               <div className="flex flex-row">
                 <img className="p-3 bg-white rounded-md mt-[10px] ml-2 h-4 w-4"></img>
-                <td className="p-3 dark:text-gray-300">{file.name}</td>
+                <td className="p-3 dark:text-gray-300">
+                  {removeFileExtension(file.name)}
+                </td>
               </div>
               <td className="p-3 dark:text-gray-300">
                 {formatDate(file.modified)}

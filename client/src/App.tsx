@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import LoginPage from "./login/LoginPage";
-import HomePage from "./home/HomePage";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
 export default function App() {
   return (
     <Router>

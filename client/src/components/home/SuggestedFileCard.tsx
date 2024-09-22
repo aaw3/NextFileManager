@@ -46,7 +46,7 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
       </div>
       <div className="ml-auto">
         <i className="material-icons text-gray-600 dark:text-gray-400">
-          keyboard_arrow_right
+          arrow_forward
         </i>
       </div>
     </Link>
