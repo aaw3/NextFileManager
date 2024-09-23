@@ -36,7 +36,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
   };
 
   return (
-    <div className="overflow-auto">
+    <div className="">
       <table className="min-w-full text-sm rounded-lg bg-white dark:bg-gray-800">
         <thead>
           <tr className="border-b border-gray-300 dark:border-gray-600">
@@ -68,6 +68,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               <td className="p-3 dark:text-gray-300">{"/" + file.name}</td>
               <td className="p-3 dark:text-gray-300">
                 <ContextMenu
+                  fileName={file.name}
                   open="Open File"
                   modify="Modify File"
                   onDelete="Delete File"
