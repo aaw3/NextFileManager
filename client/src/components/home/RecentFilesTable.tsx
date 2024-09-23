@@ -53,7 +53,6 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               key={index}
               className="border-b border-gray-300 dark:border-gray-700"
             >
-              {/* File Name */}
               <td className="p-3 dark:text-gray-300 flex items-center">
                 <img
                   className="h-4 w-4 rounded-md bg-white mr-2"
@@ -62,19 +61,11 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
                 />
                 {removeFileExtension(file.name)}
               </td>
-
-              {/* Modified Date */}
               <td className="p-3 dark:text-gray-300">
                 {formatDate(file.modified)}
               </td>
-
-              {/* File Type (Extension) */}
               <td className="p-3 dark:text-gray-300">{file.mime}</td>
-
-              {/* File Location */}
               <td className="p-3 dark:text-gray-300">{"/" + file.name}</td>
-
-              {/* Actions */}
               <td className="p-3 dark:text-gray-300">
                 <ContextMenu
                   open="Open File"
