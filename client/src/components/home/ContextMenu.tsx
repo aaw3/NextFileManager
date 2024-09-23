@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 
 interface ContextMenuProps {
+  fileName: string;
   open: string;
   modify: string;
   onDelete: string;
@@ -9,6 +10,7 @@ interface ContextMenuProps {
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
+  fileName,
   open,
   modify,
   onDelete,
@@ -41,6 +43,40 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, toggleMenu]);
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/files/${fileName}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        console.log(`File ${fileName} deleted successfully`);
+      } else {
+        console.error("Failed to delete file");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+
+  const handleOpen = async () => {
+    try {
+      const response = await fetch(`/api/files/${fileName}`, {
+        method: "OPEN",
+      });
+      if (response.ok) {
+        console.log(`File ${fileName} openedsuccessfully`);
+      } else {
+        console.error("Failed to open file");
+      }
+    } catch (error) {
+      console.error("Error openingß file:", error);
+    }
+  };
+
+  const handleModify = () => {
+    console.log(`Modifying file: ${fileName}`);
+  };
+
   return (
     <div className="relative">
       <button
@@ -69,28 +105,28 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       >
         <ul className="py-2">
           <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+            <button
+              onClick={handleOpen}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {open}
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+            <button
+              onClick={handleModify}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {modify}
-            </a>
+            </button>
           </li>
           <li>
-            <a
-              href="#"
-              className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+            <button
+              onClick={handleDelete}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
-            </a>
+            </button>
           </li>
         </ul>
       </div>
