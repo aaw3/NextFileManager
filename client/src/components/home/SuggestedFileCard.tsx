@@ -46,12 +46,6 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
           {formatDate(file.modified)}
         </p>
       </div>
-      {/* Fixed position and size for the arrow icon */}
-      <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-        <i className="material-icons text-gray-600 dark:text-gray-400">
-          arrow_forward
-        </i>
-      </div>
     </Link>
   );
 };
