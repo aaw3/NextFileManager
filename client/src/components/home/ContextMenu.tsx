@@ -5,6 +5,7 @@ interface ContextMenuProps {
   open: string;
   modify: string;
   onDelete: string;
+  rename: string;
   isOpen: boolean;
   toggleMenu: () => void;
 }
@@ -14,6 +15,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   open,
   modify,
   onDelete,
+  rename,
   isOpen,
   toggleMenu,
 }) => {
@@ -76,6 +78,27 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const handleModify = () => {
     console.log(`Modifying file: ${fileName}`);
   };
+  const handleRename = async () => {
+    const newName = prompt("Enter new file name:");
+    if (newName) {
+      try {
+        const response = await fetch(`/api/files/${fileName}/rename`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ newName }),
+        });
+        if (response.ok) {
+          console.log(`File ${fileName} renamed to ${newName} successfully`);
+        } else {
+          console.error("Failed to rename file");
+        }
+      } catch (error) {
+        console.error("Error renaming file:", error);
+      }
+    }
+  };
 
   return (
     <div
@@ -110,19 +133,27 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           !isOpen ? "hidden" : ""
         }`}
       >
-        <ul className="py-2">
+        <ul className="">
           <li>
             <button
               onClick={handleOpen}
-              className="block w-full text-center px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               {open}
             </button>
           </li>
           <li>
             <button
+              onClick={handleRename}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+            >
+              {rename}
+            </button>
+          </li>
+          <li>
+            <button
               onClick={handleModify}
-              className="block w-full text-center px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               {modify}
             </button>
@@ -130,7 +161,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <li>
             <button
               onClick={handleDelete}
-              className="block w-full text-center px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
             </button>

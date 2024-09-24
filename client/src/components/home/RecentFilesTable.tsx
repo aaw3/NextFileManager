@@ -69,9 +69,10 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               <td className="p-3 dark:text-gray-300">
                 <ContextMenu
                   fileName={file.name}
-                  open="Open File"
-                  modify="Modify File"
-                  onDelete="Delete File"
+                  open="Open"
+                  rename="Rename"
+                  modify="Modify"
+                  onDelete="Delete"
                   isOpen={openMenuIndex === index}
                   toggleMenu={() => toggleMenu(index)}
                 />

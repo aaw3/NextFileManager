@@ -52,9 +52,10 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
           </h3>
           <ContextMenu
             fileName={file.name}
-            open="Open File"
-            modify="Modify File"
-            onDelete="Delete File"
+            open="Open"
+            rename="Rename"
+            modify="Modify"
+            onDelete="Delete"
             isOpen={isOpen}
             toggleMenu={toggleMenu}
           />
