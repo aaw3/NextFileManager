@@ -24,7 +24,6 @@ def secure_path(path: str) -> Path:
 # [GET] /api/directory
 @app.get("/api/directory")
 async def list_directory(path: str = "/"):
-    print("PATH!!!", path)
     directory = secure_path(path)
     
     if not directory.exists() or not directory.is_dir():
