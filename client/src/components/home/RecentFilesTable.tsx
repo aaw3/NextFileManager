@@ -6,6 +6,7 @@ interface RecentFilesTableProps {
     name: string;
     created: string;
     modified: string;
+    size: number; 
     imagepath: string;
     mime: string;
   }[];
@@ -17,16 +18,26 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
     return date.toLocaleDateString("en-US", {
-      weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   };
 
+  const formatFileSize = (size: number) => {
+    if (size === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(size) / Math.log(k));
+    const fileSize = size / Math.pow(k, i);
+    return `${fileSize % 1 === 0 ? fileSize : fileSize.toFixed(2)} ${sizes[i]}`;
+  };
+  
+
   const removeFileExtension = (filename: string) => {
     return filename.replace(/\.[^/.]+$/, "");
   };
+
   const toggleMenu = (index: number) => {
     if (openMenuIndex === index) {
       setOpenMenuIndex(null);
@@ -42,9 +53,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
           <tr className="border-b border-gray-300 dark:border-gray-600">
             <th className="text-left p-3 dark:text-white">Name</th>
             <th className="text-left p-3 dark:text-white">Modified</th>
-            <th className="text-left p-3 dark:text-white">Type</th>
-            <th className="text-left p-3 dark:text-white">Location</th>
-            <th className="text-left p-3 dark:text-white">Actions</th>
+            <th className="text-left p-3 dark:text-white">Size</th>
           </tr>
         </thead>
         <tbody>
@@ -64,9 +73,10 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               <td className="p-3 dark:text-gray-300">
                 {formatDate(file.modified)}
               </td>
-              <td className="p-3 dark:text-gray-300">{file.mime}</td>
-              <td className="p-3 dark:text-gray-300">{"/" + file.name}</td>
               <td className="p-3 dark:text-gray-300">
+                {formatFileSize(file.size)}
+              </td>
+              <td className="p-3 text-right dark:text-gray-300"> {/* Aligning the Context Menu to the right */}
                 <ContextMenu
                   fileName={file.name}
                   open="Open"
