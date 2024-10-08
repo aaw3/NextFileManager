@@ -42,7 +42,7 @@ async def list_directory(path: list[str] = Query(...)):
         files_info = []
         for file_path in directory.iterdir():
             files_info.append(
-                get_fine_info(file_path)
+                get_file_info(file_path)
             )
         
         paths_info[p] = files_info
@@ -64,7 +64,7 @@ async def list_file(path: list[str] = Query(...)):
             files_info[p] = None
             #raise HTTPException(status_code=404, detail="Directory not found")
 
-        files_info[p] = get_fine_info(file_path)
+        files_info[p] = get_file_info(file_path)
         
 
     return {"files": files_info}
@@ -194,7 +194,7 @@ def generate_response(successful_paths, failed_paths, operation, verbose):
     return {"message": str(len(successful_paths)) + " " + operation + " successfully"}
 
 
-def get_fine_info(file_path: Path):
+def get_file_info(file_path: Path):
     return {
             "modified": int(file_path.stat().st_mtime),
             "created": int(file_path.stat().st_ctime),
