@@ -94,7 +94,7 @@ async def delete_file(data: dict = Body(...)):
     if not "paths" in data:
         raise HTTPException(status_code=400, detail="Paths not provided in request")
 
-    for path in paths:
+    for path in data["paths"]:  
         file_path = secure_path(path)
         print(file_path)
         # Print file info
