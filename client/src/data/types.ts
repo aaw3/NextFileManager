@@ -4,6 +4,7 @@ export interface File {
   modified: string;
   imagepath: string;
   mime: string;
+  size: number;
 }
 
 export interface APIResponse {
