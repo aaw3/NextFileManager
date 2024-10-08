@@ -1,11 +1,16 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 
 interface Icon {
   icon: string;
   id: string;
 }
 
-const Sidebar: FC = () => {
+interface SidebarProps {
+  openSection: string;  // The currently open section
+  setOpenSection: (section: string) => void;  // Function to change the open section
+}
+
+const Sidebar: FC<SidebarProps> = ({ openSection, setOpenSection }) => {
   const icons: Icon[] = [
     { icon: "home", id: "home" },
     { icon: "folder", id: "myfiles" },
@@ -14,8 +19,7 @@ const Sidebar: FC = () => {
     { icon: "delete", id: "trash" },
   ];
 
-  const [open, setOpen] = useState<string>("home");
-  const isActive = (id: string): boolean => id === open;
+  const isActive = (id: string): boolean => id === openSection;
 
   return (
     <div className="h-screen w-16 bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-4 space-y-4">
@@ -27,7 +31,7 @@ const Sidebar: FC = () => {
         {icons.map((icon: Icon) => (
           <i
             key={icon.id}
-            onClick={() => setOpen(icon.id)}
+            onClick={() => setOpenSection(icon.id)}  // Update the open section on click
             className={`material-icons cursor-pointer ${
               isActive(icon.id)
                 ? "text-blue-500"
