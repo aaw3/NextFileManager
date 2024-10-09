@@ -31,7 +31,7 @@ const HomePage: FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 h-full dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gray-50 h-full dark:bg-gray-900 flex flex-col pb-10">
       <Header />
       <div className="flex flex-1">
         {/* Pass the setOpenSection function to Sidebar */}
