@@ -1,11 +1,20 @@
 from fastapi import FastAPI, HTTPException, Body, Query
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Annotated, Optional, List
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
 import magic
-from typing import Annotated, Optional, List
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 mime = magic.Magic(mime=True)
 
