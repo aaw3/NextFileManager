@@ -9,7 +9,7 @@ import { getFilesFromAPI } from "../../../data/apiService";
 import axios from "axios";
 
 interface File {
-  name: string;
+  fileName: string;
   created: string;
   modified: string;
   imagepath: string;
@@ -40,25 +40,27 @@ const Home: FC = () => {
     };
     fetchData(); */
     axios
-      .get('http://127.0.0.1:8000/api/directory', {
-        params: {
-          path: [""], 
-        },
-      })
-      .then((response) => {
-        if (response.data && Array.isArray(response.data.files)) {
-          setFiles(response.data.files);
-        } else {
-          setFiles([]);
-          setError("Unexpected response format.");
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Failed to fetch files.");
-        setLoading(false);
+    .get('http://127.0.0.1:8000/api/directory', {
+      params: {
+        path: "d0",
+      },
+    })
+    .then((response) => {
+      // Extract the files under 'directories.d0'
+      const directories = response.data.directories;
+      if (directories && Array.isArray(directories.d0)) {
+        setFiles(directories.d0);
+      } else {
+        setFiles([]);
+        setError("Unexpected response format.");
+      }
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError("Failed to fetch files.");
+      setLoading(false);
     });
-  }, []);
+}, []);
 
   if (loading) {
     return (
