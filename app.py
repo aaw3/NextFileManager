@@ -47,7 +47,7 @@ async def list_directory(path: list[str] = Query(...)):
         
         paths_info[p] = files_info
 
-        return {"directories": paths_info}
+    return {"directories": paths_info}
 
 # [GET] /api/file
 @app.get("/api/file")
@@ -151,7 +151,7 @@ async def delete_directory(path: list[str] = Query(...), verbose: Optional[bool]
             continue
         successful_paths.append(p)
 
-    generate_response(successful_paths, failed_paths, "Directories deleted", verbose)
+    return generate_response(successful_paths, failed_paths, "Directories deleted", verbose)
 
 # [DELETE] /api/file
 @app.delete("/api/file")
@@ -179,7 +179,7 @@ async def delete_file(path: list[str] = Query(...), verbose: Optional[bool] = Qu
 
         successful_paths.append(p)
 
-    generate_response(successful_paths, failed_paths, "Files deleted", verbose)
+    return generate_response(successful_paths, failed_paths, "Files deleted", verbose)
 
 
 # Function to determine the response
