@@ -15,7 +15,14 @@ print(f"Root Directory: {ROOT_DIRECTORY}")
 
 # Will be combined with user directory eventually
 def secure_path(path: str) -> Path:
+
+    if path == "/":
+        path = "." # Make root directory relative
+    else:
+        path = path.lstrip("/") # Make all paths provided relative
+
     combined_path = ROOT_DIRECTORY / path
+    print(ROOT_DIRECTORY, combined_path)
     # Make sure path is within defined root directory
     resolved_path = combined_path.resolve()
     
