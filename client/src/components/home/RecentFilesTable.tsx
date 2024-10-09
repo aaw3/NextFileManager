@@ -63,11 +63,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               className="border-b border-gray-300 dark:border-gray-700"
             >
               <td className="p-3 dark:text-gray-300 flex items-center">
-                <img
-                  className="h-4 w-4 rounded-md bg-white mr-2"
-                  src={file.imagepath || "/images/placeholder.png"}
-                  alt={file.name}
-                />
+              <img src = {file.imagepath || "/images/placeholder.png"} className="p-3 bg-white rounded-md ml-2 mr-2 my-1 h-4 w-4"></img>
                 {removeFileExtension(file.name)}
               </td>
               <td className="p-3 dark:text-gray-300">
@@ -76,7 +72,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               <td className="p-3 dark:text-gray-300">
                 {formatFileSize(file.size)}
               </td>
-              <td className="p-3 text-right dark:text-gray-300"> {/* Aligning the Context Menu to the right */}
+              <td className="p-3 text-right dark:text-gray-300">
                 <ContextMenu
                   fileName={file.name}
                   open="Open"
