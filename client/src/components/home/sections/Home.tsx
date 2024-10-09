@@ -6,6 +6,7 @@ import RecentFilesGrid from "../../../components/home/RecentFileGrid";
 import RecentFilesTable from "../../../components/home/RecentFilesTable";
 import ButtonGroup from "../../../components/home/ButtonGroup";
 import { getFilesFromAPI } from "../../../data/apiService";
+import axios from "axios";
 
 interface File {
   name: string;
@@ -13,6 +14,7 @@ interface File {
   modified: string;
   imagepath: string;
   mime: string;
+  size: number;
 }
 
 interface APIResponse {
@@ -26,7 +28,7 @@ const Home: FC = () => {
   const [view, setView] = useState<number>(2);
 
   useEffect(() => {
-    const fetchData = async () => {
+  /*   const fetchData = async () => {
       try {
         const result: APIResponse = await getFilesFromAPI();
         setFiles(result.files);
@@ -36,7 +38,22 @@ const Home: FC = () => {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchData(); */
+    axios
+    .get(`http://127.0.0.1:8000/api/directory`, {
+      params: {
+        path: "",
+      },
+    })
+    
+    .then((response) => {
+      setFiles(response.data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      setError("Failed to fetch files.");
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
