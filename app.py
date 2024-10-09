@@ -4,8 +4,19 @@ from pathlib import Path
 import shutil
 import magic
 from typing import Annotated, Optional, List
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 mime = magic.Magic(mime=True)
 
