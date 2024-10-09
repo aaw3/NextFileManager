@@ -15,7 +15,6 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
     return date.toLocaleDateString("en-US", {
-      weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
