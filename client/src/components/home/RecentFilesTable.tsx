@@ -8,7 +8,7 @@ interface RecentFilesTableProps {
     modified: string;
     size: number; 
     imagepath: string;
-    mime: string;
+    mime_type: string;
   }[];
 }
 
@@ -24,7 +24,9 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
     });
   };
 
-  const formatFileSize = (size: number) => {
+  const formatFileSize = (size: number, mime: string) => {
+    console.log(mime);
+    if (mime === "inode/directory") return "-";
     if (size === 0) return "0 B";
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB", "TB"];
@@ -71,7 +73,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
                 {formatDate(file.modified)}
               </td>
               <td className="p-3 dark:text-gray-300">
-                {formatFileSize(file.size)}
+                {formatFileSize(file.size, file.mime_type)}
               </td>
               <td className="p-3 text-right dark:text-gray-300">
                 <ContextMenu

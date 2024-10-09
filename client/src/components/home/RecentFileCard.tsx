@@ -8,7 +8,7 @@ interface RecentFileCardProps {
     created: string;
     modified: string;
     imagepath: string;
-    mime: string;
+    mime_type: string;
   };
   isOpen: boolean;
   toggleMenu: () => void;

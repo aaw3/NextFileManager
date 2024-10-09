@@ -7,7 +7,7 @@ interface SuggestedFilesGridProps {
     created: string;
     modified: string;
     imagepath: string;
-    mime: string;
+    mime_type: string;
   }[];
 }
 
