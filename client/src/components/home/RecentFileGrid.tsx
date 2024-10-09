@@ -3,7 +3,7 @@ import FileCard2 from "./RecentFileCard";
 
 interface File {
   files: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;

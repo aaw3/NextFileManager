@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 interface FileCardProps {
   file: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;
@@ -22,8 +22,9 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
     });
   };
 
-  const removeFileExtension = (filename: string) => {
-    return filename.replace(/\.[^/.]+$/, "");
+  const removeFileExtension = (fileName: string) => {
+    if (!fileName) return fileName;
+    return fileName.replace(/\.[^/.]+$/, "");
   };
 
   return (
@@ -38,9 +39,9 @@ const FileCard: React.FC<FileCardProps> = ({ file }) => {
       <div className="flex-1 min-w-0">
         <h3
           className="font-semibold text-sm sm:text-sm md:text-md dark:text-white truncate"
-          title={file.name}
+          title={file.fileName}
         >
-          {removeFileExtension(file.name)}
+          {file.fileName}
         </h3>
         <p className="text-xs sm:text-xxs dark:text-gray-400 mt-1">
           {formatDate(file.modified)}

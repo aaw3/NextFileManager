@@ -3,7 +3,7 @@ import FileCard from "./SuggestedFileCard";
 
 interface SuggestedFilesGridProps {
   files: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;

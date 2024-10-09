@@ -3,7 +3,7 @@ import ContextMenu from "./ContextMenu";
 
 interface RecentFilesTableProps {
   files: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     size: number; 
@@ -35,6 +35,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
   
 
   const removeFileExtension = (filename: string) => {
+    if (!filename) return "";
     return filename.replace(/\.[^/.]+$/, "");
   };
 
@@ -64,7 +65,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
             >
               <td className="p-3 dark:text-gray-300 flex items-center">
               <img src = {file.imagepath || "/images/placeholder.png"} className="p-3 bg-white rounded-md ml-2 mr-2 my-1 h-4 w-4"></img>
-                {removeFileExtension(file.name)}
+                {removeFileExtension(file.fileName)}
               </td>
               <td className="p-3 dark:text-gray-300">
                 {formatDate(file.modified)}
@@ -74,7 +75,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
               </td>
               <td className="p-3 text-right dark:text-gray-300">
                 <ContextMenu
-                  fileName={file.name}
+                  fileName={file.fileName}
                   open="Open"
                   rename="Rename"
                   modify="Modify"

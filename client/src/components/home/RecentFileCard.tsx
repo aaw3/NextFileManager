@@ -4,7 +4,7 @@ import ContextMenu from "./ContextMenu";
 
 interface RecentFileCardProps {
   file: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;
@@ -30,6 +30,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
   };
 
   const removeFileExtension = (filename: string) => {
+    if (!filename) return "";
     return filename.replace(/\.[^/.]+$/, "");
   };
 
@@ -46,12 +47,12 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
         <div className="flex justify-between items-center">
           <h3
             className="font-bold text-sm text-gray-900 dark:text-white truncate"
-            title={file.name}
+            title={file.fileName}
           >
-            {removeFileExtension(file.name)}
+            {removeFileExtension(file.fileName)}
           </h3>
           <ContextMenu
-            fileName={file.name}
+            fileName={file.fileName}
             open="Open"
             rename="Rename"
             modify="Modify"
