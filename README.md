@@ -14,8 +14,14 @@
 - Uses SQLAlchemy ORM to manage objects in PostgreSQL
 -  Supports Users, Scopes, and Permission Management in the the Admin Interface
 
+## Demo
+https://github.com/user-attachments/assets/eb1e90ac-bc88-4b30-9d3e-01f9781b9d84
+
+
 ## Login
 ![image](https://github.com/user-attachments/assets/a7a9ff15-43b4-40e4-88c1-6cfaea06d65f)
 
-## File Viewer
-![image](https://github.com/user-attachments/assets/9cc73e8b-e195-4dc1-86bc-6f7c2cd204d2)
+
+
+
+
