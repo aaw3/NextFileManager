@@ -1,4 +1,4 @@
-# next-file-uploader
+# next-file-manager
 
 ## Cutting Edge File Server written in Python using FastAPI, Redis, and React
 
