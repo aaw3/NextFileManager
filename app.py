@@ -5,16 +5,20 @@ from pydantic import BaseModel
 from pathlib import Path
 import shutil
 import magic
+from typing import Annotated, Optional, List
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 mime = magic.Magic(mime=True)
 
@@ -24,7 +28,14 @@ print(f"Root Directory: {ROOT_DIRECTORY}")
 
 # Will be combined with user directory eventually
 def secure_path(path: str) -> Path:
+
+    if path == "/":
+        path = "." # Make root directory relative
+    else:
+        path = path.lstrip("/") # Make all paths provided relative
+
     combined_path = ROOT_DIRECTORY / path
+    print(ROOT_DIRECTORY, combined_path)
     # Make sure path is within defined root directory
     resolved_path = combined_path.resolve()
     
