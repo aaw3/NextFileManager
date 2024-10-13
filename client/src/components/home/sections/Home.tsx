@@ -40,26 +40,27 @@ const Home: FC = () => {
     };
     fetchData(); */
     axios
-    .get('http://127.0.0.1:8000/api/directory', {
-      params: {
-        path: ".",
-      },
-    })
-    .then((response) => {
-      // Extract the files under 'directories.d0'
-      const directories = response.data.directories;
-      if (directories && Array.isArray(directories.d0)) {
-        setFiles(directories.d0);
-      } else {
-        setFiles([]);
-        setError("Unexpected response format.");
-      }
-      setLoading(false);
-    })
-    .catch((err) => {
-      setError("Failed to fetch files.");
-      setLoading(false);
-    });
+  .get('http://127.0.0.1:8000/api/directory', {
+    params: {
+      path: ".",
+    },
+  })
+  .then((response) => {
+    const directories = response.data.directories;
+    const requestedPath = "."; 
+    if (directories && Array.isArray(directories[requestedPath])) {
+      setFiles(directories[requestedPath]);
+    } else {
+      setFiles([]);
+      setError("Unexpected response format.");
+    }
+    setLoading(false);
+  })
+  .catch((err) => {
+    setError("Failed to fetch files.");
+    setLoading(false);
+  });
+
 }, []);
 
   if (loading) {
