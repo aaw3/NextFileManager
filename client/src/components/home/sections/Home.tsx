@@ -42,7 +42,7 @@ const Home: FC = () => {
     axios
     .get('http://127.0.0.1:8000/api/directory', {
       params: {
-        path: "d0",
+        path: ".",
       },
     })
     .then((response) => {
