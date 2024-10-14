@@ -45,6 +45,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, toggleMenu]);
 
+  // DELETE
   const handleDelete = async () => {
     try {
       const response = await fetch(`/api/files/${fileName}`, {
@@ -60,6 +61,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
+  // OPEN
   const handleOpen = async () => {
     try {
       const response = await fetch(`/api/files/${fileName}`, {
@@ -75,24 +77,29 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
+  // MODIFY
   const handleModify = () => {
     console.log(`Modifying file: ${fileName}`);
   };
+
+  // RENAME
   const handleRename = async () => {
     const newName = prompt("Enter new file name:");
     if (newName) {
       try {
-        const response = await fetch(`/api/files/${fileName}/rename`, {
-          method: "POST",
+        const response = await fetch(`http://127.0.0.1:8000/api/file`, {
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ newName }),
+          body: JSON.stringify({ 
+            [fileName]: newName, }),
         });
         if (response.ok) {
           console.log(`File ${fileName} renamed to ${newName} successfully`);
         } else {
-          console.error("Failed to rename file");
+          const errorData = await response.json();
+          console.error("Failed to rename file:", errorData.details || response.statusText);
         }
       } catch (error) {
         console.error("Error renaming file:", error);
