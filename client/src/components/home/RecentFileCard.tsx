@@ -57,6 +57,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
             rename="Rename"
             modify="Modify"
             onDelete="Delete"
+            mime_type={file.mime_type}
             isOpen={isOpen}
             toggleMenu={toggleMenu}
           />

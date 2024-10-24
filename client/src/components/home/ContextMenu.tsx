@@ -6,6 +6,7 @@ interface ContextMenuProps {
   modify: string;
   onDelete: string;
   rename: string;
+  mime_type: string;
   isOpen: boolean;
   toggleMenu: () => void;
 }
@@ -16,6 +17,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   modify,
   onDelete,
   rename,
+  mime_type,
   isOpen,
   toggleMenu,
 }) => {
@@ -45,10 +47,26 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, toggleMenu]);
 
-  // DELETE
-  const handleDelete = async () => {
+  // DELETE FILE
+  const handleDeleteFile = async () => {
     try {
-      const response = await fetch(`/api/files/${fileName}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/file`, {
+        
+      });
+      if (response.ok) {
+        console.log(`File ${fileName} deleted successfully`);
+      } else {
+        console.error("Failed to delete file");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+
+  // DELETE DIRECTORY
+  const handleDeleteDirectory = async () => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/directory`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -167,7 +185,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
           <li>
             <button
-              onClick={handleDelete}
+              onClick={() => mime_type === 'inode/directory' ?  handleDeleteDirectory() : handleDeleteFile()}
               className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
