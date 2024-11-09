@@ -47,37 +47,44 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, toggleMenu]);
 
-  // DELETE FILE
-  const handleDeleteFile = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/file`, {
-        
-      });
-      if (response.ok) {
-        console.log(`File ${fileName} deleted successfully`);
-      } else {
-        console.error("Failed to delete file");
-      }
-    } catch (error) {
-      console.error("Error deleting file:", error);
+ // DELETE FILE
+const handleDeleteFile = async () => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/file?path=${encodeURIComponent(fileName)}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log(`File ${fileName} deleted successfully`);
+    } else {
+      console.error("Failed to delete file");
     }
-  };
+  } catch (error) {
+    console.error("Error deleting file:", error);
+  }
+};
 
-  // DELETE DIRECTORY
-  const handleDeleteDirectory = async () => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/directory`, {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        console.log(`File ${fileName} deleted successfully`);
-      } else {
-        console.error("Failed to delete file");
-      }
-    } catch (error) {
-      console.error("Error deleting file:", error);
+// DELETE DIRECTORY
+const handleDeleteDirectory = async () => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/directory?path=${encodeURIComponent(fileName)}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.ok) {
+      console.log(`Directory ${fileName} deleted successfully`);
+    } else {
+      console.error("Failed to delete directory");
     }
-  };
+  } catch (error) {
+    console.error("Error deleting directory:", error);
+  }
+};
+
 
   // OPEN
   const handleOpen = async () => {
