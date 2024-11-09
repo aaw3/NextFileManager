@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from "react";
 interface ContextMenuProps {
   fileName: string;
   open: string;
-  modify: string;
   onDelete: string;
   rename: string;
   mime_type: string;
@@ -14,38 +13,38 @@ interface ContextMenuProps {
 const ContextMenu: React.FC<ContextMenuProps> = ({
   fileName,
   open,
-  modify,
   onDelete,
   rename,
   mime_type,
   isOpen,
   toggleMenu,
 }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+const menuRef = useRef<HTMLDivElement>(null);
+const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        toggleMenu();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node) &&
+      buttonRef.current &&
+      !buttonRef.current.contains(event.target as Node)
+    ) {
+      toggleMenu();
     }
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, toggleMenu]);
+  if (isOpen) {
+    document.addEventListener("mousedown", handleClickOutside);
+  } else {
+    document.removeEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [isOpen, toggleMenu]);
+
 
  // DELETE FILE
 const handleDeleteFile = async () => {
@@ -65,6 +64,7 @@ const handleDeleteFile = async () => {
     console.error("Error deleting file:", error);
   }
 };
+
 
 // DELETE DIRECTORY
 const handleDeleteDirectory = async () => {
@@ -102,10 +102,6 @@ const handleDeleteDirectory = async () => {
     }
   };
 
-  // MODIFY
-  const handleModify = () => {
-    console.log(`Modifying file: ${fileName}`);
-  };
 
   // RENAME
   const handleRename = async () => {
@@ -180,14 +176,6 @@ const handleDeleteDirectory = async () => {
               className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               {rename}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={handleModify}
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
-            >
-              {modify}
             </button>
           </li>
           <li>
