@@ -80,7 +80,6 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
                   fileName={file.fileName}
                   open="Open"
                   rename="Rename"
-                  modify="Modify"
                   onDelete="Delete"
                   mime_type={file.mime_type}
                   isOpen={openMenuIndex === index}

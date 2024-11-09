@@ -60,7 +60,6 @@ const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({ file }) => {
           fileName={file.fileName}
           open="Open"
           rename="Rename"
-          modify="Modify"
           onDelete="Delete"
           mime_type={file.mime_type}
           isOpen={isMenuOpen}

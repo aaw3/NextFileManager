@@ -45,7 +45,6 @@ useEffect(() => {
   };
 }, [isOpen, toggleMenu]);
 
-
  // DELETE FILE
 const handleDeleteFile = async () => {
   try {
@@ -64,7 +63,6 @@ const handleDeleteFile = async () => {
     console.error("Error deleting file:", error);
   }
 };
-
 
 // DELETE DIRECTORY
 const handleDeleteDirectory = async () => {
