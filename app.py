@@ -128,16 +128,16 @@ async def rename_file(files: dict[str, str], verbose: Optional[bool] = Query(Fal
     failed_paths = {}
     
     for old_name, new_name in files.items():
-        old_directory = secure_path(old_name)
-        new_directory = secure_path(new_name)
+        old_path = secure_path(old_name)
+        new_path = secure_path(new_name)
 
-        if not old_directory.exists() or not old_directory.is_dir():
+        if not old_path.exists() or not old_path.exists():
             #raise HTTPException(status_code=404, detail="Directory not found")
             failed_paths[old_name] = new_name
             continue
         
         try:
-            old_directory.rename(new_directory)
+            old_path.rename(new_path)
         except Exception as e:
             #raise HTTPException(status_code=500, detail=str(e))
             failed_paths[old_name] = new_name
