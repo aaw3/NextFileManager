@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useCallback} from "react";
 import LoadingIndicator from "../../../components/home/LoadingIndicator";
 import ErrorDisplay from "../../../components/home/ErrorDisplay";
 import SuggestedFilesGrid from "../../../components/home/SuggestedFilesGrid";
@@ -26,30 +26,34 @@ const Home: FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<number>(2);
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
+    setLoading(true);
     axios
-  .get('http://127.0.0.1:8000/api/directory', {
-    params: {
-      path: ".",
-    },
-  })
-  .then((response) => {
-    const directories = response.data.directories;
-    const requestedPath = "."; 
-    if (directories && Array.isArray(directories[requestedPath])) {
-      setFiles(directories[requestedPath]);
-    } else {
-      setFiles([]);
-      setError("Unexpected response format.");
-    }
-    setLoading(false);
-  })
-  .catch((err) => {
-    setError("Failed to fetch files.");
-    setLoading(false);
-  });
+      .get("http://127.0.0.1:8000/api/directory", {
+        params: {
+          path: ".",
+        },
+      })
+      .then((response) => {
+        const directories = response.data.directories;
+        const requestedPath = ".";
+        if (directories && Array.isArray(directories[requestedPath])) {
+          setFiles(directories[requestedPath]);
+        } else {
+          setFiles([]);
+          setError("Unexpected response format.");
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to fetch files.");
+        setLoading(false);
+      });
+  }, []); 
 
-}, []);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) {
     return (
