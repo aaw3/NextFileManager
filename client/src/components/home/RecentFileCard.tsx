@@ -12,12 +12,14 @@ interface RecentFileCardProps {
   };
   isOpen: boolean;
   toggleMenu: () => void;
+  refreshData: () => void;
 }
 
 const RecentFileCard: React.FC<RecentFileCardProps> = ({
   file,
   isOpen,
   toggleMenu,
+  refreshData
 }) => {
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
@@ -59,6 +61,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
             mime_type={file.mime_type}
             isOpen={isOpen}
             toggleMenu={toggleMenu}
+            refreshData={refreshData}
           />
         </div>
 

@@ -10,9 +10,10 @@ interface RecentFilesTableProps {
     imagepath: string;
     mime_type: string;
   }[];
+  refreshData: () => void
 }
 
-const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
+const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files, refreshData }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
 
   const formatDate = (epoch: string) => {
@@ -84,6 +85,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files }) => {
                   mime_type={file.mime_type}
                   isOpen={openMenuIndex === index}
                   toggleMenu={() => toggleMenu(index)}
+                  refreshData={refreshData}
                 />
               </td>
             </tr>

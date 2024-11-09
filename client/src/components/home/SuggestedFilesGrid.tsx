@@ -16,7 +16,7 @@ const SuggestedFilesGrid: React.FC<SuggestedFilesGridProps> = ({ files, refreshD
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
       {files.slice(0, 10).map((file, index) => (
-        <SuggestedFileCard key={index} file={file} />
+        <SuggestedFileCard key={index} file={file} refreshData={refreshData}/>
       ))}
     </div>
   );

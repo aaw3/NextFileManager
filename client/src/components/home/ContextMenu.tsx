@@ -8,6 +8,7 @@ interface ContextMenuProps {
   mime_type: string;
   isOpen: boolean;
   toggleMenu: () => void;
+  refreshData: () => void
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -18,6 +19,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   mime_type,
   isOpen,
   toggleMenu,
+  refreshData
 }) => {
 const menuRef = useRef<HTMLDivElement>(null);
 const buttonRef = useRef<HTMLButtonElement>(null);
@@ -56,6 +58,7 @@ const handleDeleteFile = async () => {
     });
     if (response.ok) {
       console.log(`File ${fileName} deleted successfully`);
+      refreshData();
     } else {
       console.error("Failed to delete file");
     }
@@ -75,6 +78,7 @@ const handleDeleteDirectory = async () => {
     });
     if (response.ok) {
       console.log(`Directory ${fileName} deleted successfully`);
+      refreshData();
     } else {
       console.error("Failed to delete directory");
     }
@@ -116,6 +120,7 @@ const handleDeleteDirectory = async () => {
         });
         if (response.ok) {
           console.log(`File ${fileName} renamed to ${newName} successfully`);
+          refreshData();
         } else {
           const errorData = await response.json();
           console.error("Failed to rename file:", errorData.details || response.statusText);

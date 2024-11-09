@@ -71,7 +71,7 @@ const Home: FC = () => {
     <div>
       <section className="px-6">
         <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">For you</h2>
-        <SuggestedFilesGrid files={files} />
+        <SuggestedFilesGrid files={files} refreshData={fetchData} />
       </section>
       <section className="px-6">
         <div className="mb-4 flex justify-between items-center">
@@ -80,7 +80,7 @@ const Home: FC = () => {
             <ButtonGroup activeView={view} onChangeView={setView} />
           </div>
         </div>
-        {view === 1 ? <RecentFilesGrid files={files} /> : <RecentFilesTable files={files} />}
+        {view === 1 ? <RecentFilesGrid files={files} refreshData={fetchData} /> : <RecentFilesTable files={files} refreshData={fetchData} />}
       </section>
     </div>
   );

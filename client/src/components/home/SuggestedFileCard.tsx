@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ContextMenu from "./ContextMenu";
+import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
 interface SuggestedFileCardProps {
   file: {
@@ -10,9 +11,10 @@ interface SuggestedFileCardProps {
     imagepath: string;
     mime_type: string;
   };
+  refreshData: () => void;
 }
 
-const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({ file }) => {
+const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({ file, refreshData }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const formatDate = (epoch: string) => {
@@ -64,6 +66,7 @@ const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({ file }) => {
           mime_type={file.mime_type}
           isOpen={isMenuOpen}
           toggleMenu={toggleMenu}
+          refreshData={refreshData}
         />
       </div>
     </div>
