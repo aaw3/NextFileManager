@@ -20,6 +20,7 @@ interface APIResponse {
   files: File[];
 }
 
+
 const Home: FC = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(true);

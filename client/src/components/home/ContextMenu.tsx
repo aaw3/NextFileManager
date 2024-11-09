@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import ConfirmationModal from "./ConfirmationModal";
+import Notification from "./Notification";
 
 interface ContextMenuProps {
   fileName: string;
@@ -8,7 +10,7 @@ interface ContextMenuProps {
   mime_type: string;
   isOpen: boolean;
   toggleMenu: () => void;
-  refreshData: () => void
+  refreshData: () => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
@@ -19,74 +21,89 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   mime_type,
   isOpen,
   toggleMenu,
-  refreshData
+  refreshData,
 }) => {
-const menuRef = useRef<HTMLDivElement>(null);
-const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      menuRef.current &&
-      !menuRef.current.contains(event.target as Node) &&
-      buttonRef.current &&
-      !buttonRef.current.contains(event.target as Node)
-    ) {
-      toggleMenu();
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target as Node)
+      ) {
+        toggleMenu();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, toggleMenu]);
+
+  const showNotificationMessage = (message: string) => {
+    setNotificationMessage(message);
+    setShowNotification(false); 
+    setTimeout(() => setShowNotification(true), 0); 
+  };
+
+  // DELETE FILE
+  const handleDeleteFile = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/file?path=${encodeURIComponent(fileName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.ok) {
+        showNotificationMessage(`File ${fileName} deleted successfully`);
+        refreshData();
+      } else {
+        console.error("Failed to delete file");
+      }
+    } catch (error) {
+      console.error("Error deleting file:", error);
     }
   };
 
-  if (isOpen) {
-    document.addEventListener("mousedown", handleClickOutside);
-  } else {
-    document.removeEventListener("mousedown", handleClickOutside);
-  }
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  // DELETE DIRECTORY
+  const handleDeleteDirectory = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/directory?path=${encodeURIComponent(fileName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.ok) {
+        showNotificationMessage(`Directory ${fileName} deleted successfully`);
+        refreshData();
+      } else {
+        console.error("Failed to delete directory");
+      }
+    } catch (error) {
+      console.error("Error deleting directory:", error);
+    }
   };
-}, [isOpen, toggleMenu]);
-
- // DELETE FILE
-const handleDeleteFile = async () => {
-  try {
-    const response = await fetch(`http://127.0.0.1:8000/api/file?path=${encodeURIComponent(fileName)}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      console.log(`File ${fileName} deleted successfully`);
-      refreshData();
-    } else {
-      console.error("Failed to delete file");
-    }
-  } catch (error) {
-    console.error("Error deleting file:", error);
-  }
-};
-
-// DELETE DIRECTORY
-const handleDeleteDirectory = async () => {
-  try {
-    const response = await fetch(`http://127.0.0.1:8000/api/directory?path=${encodeURIComponent(fileName)}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      console.log(`Directory ${fileName} deleted successfully`);
-      refreshData();
-    } else {
-      console.error("Failed to delete directory");
-    }
-  } catch (error) {
-    console.error("Error deleting directory:", error);
-  }
-};
-
 
   // OPEN
   const handleOpen = async () => {
@@ -95,15 +112,14 @@ const handleDeleteDirectory = async () => {
         method: "OPEN",
       });
       if (response.ok) {
-        console.log(`File ${fileName} openedsuccessfully`);
+        console.log(`File ${fileName} opened successfully`);
       } else {
         console.error("Failed to open file");
       }
     } catch (error) {
-      console.error("Error openingß file:", error);
+      console.error("Error opening file:", error);
     }
   };
-
 
   // RENAME
   const handleRename = async () => {
@@ -115,11 +131,13 @@ const handleDeleteDirectory = async () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ 
-            [fileName]: newName, }),
+          body: JSON.stringify({
+            [fileName]: newName,
+          }),
         });
         if (response.ok) {
-          console.log(`File ${fileName} renamed to ${newName} successfully`);
+          showNotificationMessage(`File ${fileName} renamed to ${newName} successfully`);
+          setShowNotification(true);
           refreshData();
         } else {
           const errorData = await response.json();
@@ -129,6 +147,23 @@ const handleDeleteDirectory = async () => {
         console.error("Error renaming file:", error);
       }
     }
+  };
+
+  const confirmDelete = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowConfirmation(false);
+    if (mime_type === "inode/directory") {
+      handleDeleteDirectory();
+    } else {
+      handleDeleteFile();
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
   };
 
   return (
@@ -164,7 +199,7 @@ const handleDeleteDirectory = async () => {
           !isOpen ? "hidden" : ""
         }`}
       >
-        <ul className="">
+        <ul>
           <li>
             <button
               onClick={handleOpen}
@@ -183,7 +218,7 @@ const handleDeleteDirectory = async () => {
           </li>
           <li>
             <button
-              onClick={() => mime_type === 'inode/directory' ?  handleDeleteDirectory() : handleDeleteFile()}
+              onClick={confirmDelete}
               className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
@@ -191,6 +226,21 @@ const handleDeleteDirectory = async () => {
           </li>
         </ul>
       </div>
+
+      {showConfirmation && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this file?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+
+      {showNotification && (
+        <Notification
+          message={notificationMessage}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
     </div>
   );
 };

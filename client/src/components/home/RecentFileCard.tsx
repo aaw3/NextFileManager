@@ -42,7 +42,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
         <div className="w-full h-36 mb-2 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
           <img
             src={file.imagepath || "/path/to/placeholder-image.png"}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover dark:bg-gray-600"
           />
         </div>
 
