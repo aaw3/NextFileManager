@@ -195,32 +195,35 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       <div
         ref={menuRef}
         id="dropdownDots"
-        className={`absolute right-0 mt-2 z-50 w-32 bg-white dark:bg-gray-900 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 ${
+        className={`absolute right-0 mt-2 z-50 w-36 bg-white dark:bg-gray-900 shadow-lg rounded-md border border-gray-200 dark:border-gray-700 ${
           !isOpen ? "hidden" : ""
         }`}
       >
         <ul>
           <li>
-            <button
+          <button
               onClick={handleOpen}
-              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+              className="flex items-center w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
+              <i className="material-icons text-sm mr-2">file_open</i>
               {open}
             </button>
           </li>
           <li>
-            <button
+          <button
               onClick={handleRename}
-              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+              className="flex items-center w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
+              <i className="material-icons text-sm mr-2">edit</i>
               {rename}
             </button>
           </li>
           <li>
-            <button
-              onClick={confirmDelete}
-              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+          <button
+              onClick={handleOpen}
+              className="flex items-center w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
+              <i className="material-icons text-sm mr-2">delete</i>
               {onDelete}
             </button>
           </li>
