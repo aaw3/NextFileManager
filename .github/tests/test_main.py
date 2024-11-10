@@ -26,7 +26,6 @@ def test_create_directories():
     dir_to_create1 = "create_dir0"
     dir_to_create2 = "create_dir1"
     response = client.post("/api/directory?verbose=True", json={"path": [dir_to_create1, dir_to_create2]})
-    print("successful paths", response.json()['paths']['success'])
     assert response.status_code == 200
     assert all(d in response.json()['paths']['success'] for d in [dir_to_create1, dir_to_create2])
     try:
@@ -47,7 +46,6 @@ def test_create_directory_file_exists_fail():
     file_to_create = "create_file0"
     mkfile((file_to_create, ""))
     response = client.post("/api/directory?verbose=True", json={"path": [file_to_create]})
-    print("resp", response.json())
     assert response.status_code == 400
     assert file_to_create in response.json()['paths']['fail']
     #rmfile(file_to_create)
