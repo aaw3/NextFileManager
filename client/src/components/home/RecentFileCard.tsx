@@ -12,12 +12,14 @@ interface RecentFileCardProps {
   };
   isOpen: boolean;
   toggleMenu: () => void;
+  refreshData: () => void;
 }
 
 const RecentFileCard: React.FC<RecentFileCardProps> = ({
   file,
   isOpen,
   toggleMenu,
+  refreshData
 }) => {
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
@@ -40,7 +42,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
         <div className="w-full h-36 mb-2 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
           <img
             src={file.imagepath || "/path/to/placeholder-image.png"}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover dark:bg-gray-600"
           />
         </div>
 
@@ -55,11 +57,11 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
             fileName={file.fileName}
             open="Open"
             rename="Rename"
-            modify="Modify"
             onDelete="Delete"
             mime_type={file.mime_type}
             isOpen={isOpen}
             toggleMenu={toggleMenu}
+            refreshData={refreshData}
           />
         </div>
 
