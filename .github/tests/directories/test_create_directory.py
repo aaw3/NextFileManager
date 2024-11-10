@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from app import app
-from tests.helpers import mkdir, rmdir
+from tests.helpers import mkdir, rmdir, mkfile, rmfile
 
 client = TestClient(app)
 
@@ -16,9 +16,8 @@ def test_create_directory_oob_fail():
     assert response.status_code == 403  # Forbidden accessing out of user scope
 
 def test_create_directory_file_exists_fail():
-    from tests.helpers import mkfile
     file_to_create = "create_file0"
     mkfile((file_to_create, ""))
     response = client.post("/api/directory", json={"path": [file_to_create]}, params={"verbose": True})
     assert response.status_code == 400
-    rmdir(file_to_create)
+    rmfile(file_to_create)
