@@ -31,4 +31,4 @@ jobs:
 
       - name: Run tests
         run: pytest
-        working-directory: .
+        working-directory: ./.github
