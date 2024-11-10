@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
+import UploadMenu from "./UploadMenu"; 
 
 interface Icon {
   icon: string;
@@ -6,11 +7,13 @@ interface Icon {
 }
 
 interface SidebarProps {
-  openSection: string;  // The currently open section
-  setOpenSection: (section: string) => void;  // Function to change the open section
+  openSection: string;  
+  setOpenSection: (section: string) => void;  
 }
 
 const Sidebar: FC<SidebarProps> = ({ openSection, setOpenSection }) => {
+  const [isUploadMenuOpen, setIsUploadMenuOpen] = useState(false); 
+
   const icons: Icon[] = [
     { icon: "home", id: "home" },
     { icon: "folder", id: "myfiles" },
@@ -21,17 +24,30 @@ const Sidebar: FC<SidebarProps> = ({ openSection, setOpenSection }) => {
 
   const isActive = (id: string): boolean => id === openSection;
 
+  const toggleUploadMenu = () => {
+    setIsUploadMenuOpen(!isUploadMenuOpen);
+  };
+
   return (
-    <div className="h-screen w-16 bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-4 space-y-4">
-      <button className="bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center">
+    <div className="relative h-screen w-16 bg-gray-100 dark:bg-gray-900 flex flex-col items-center py-4 space-y-4">
+      <button
+        onClick={toggleUploadMenu}
+        className="bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center"
+      >
         <i className="material-icons text-white text-2xl">add</i>
       </button>
+
+      {isUploadMenuOpen && (
+        <div className="absolute top-1 left-44">
+          <UploadMenu isOpen={isUploadMenuOpen} toggleMenu={toggleUploadMenu} />
+        </div>
+      )}
 
       <div className="flex flex-col space-y-4 items-center">
         {icons.map((icon: Icon) => (
           <i
             key={icon.id}
-            onClick={() => setOpenSection(icon.id)}  // Update the open section on click
+            onClick={() => setOpenSection(icon.id)} 
             className={`material-icons cursor-pointer ${
               isActive(icon.id)
                 ? "text-blue-500"
