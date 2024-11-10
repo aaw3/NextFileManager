@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, Body, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Body, Query, Request, BackgroundTasks
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
@@ -7,6 +7,9 @@ import magic
 from typing import Annotated, Optional, List
 from fastapi.middleware.cors import CORSMiddleware
 from http import HTTPStatus
+import zipfile
+from datetime import datetime
+from io import BytesIO
 
 app = FastAPI()
 
@@ -17,6 +20,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+BUFFER_SIZE = 1024 * 1024  # 1MB
+MAX_ZIP_MEMORY_SIZE = 1024 * 1024 * 512  # 512MB
+MAX_UNCOMPRESSED_SIZE = 1024 * 1024 * 128 # 128MB
 
 
 
@@ -89,6 +96,90 @@ async def list_file(path: list[str] = Query(...)):
         
 
     return {"files": files_info}
+
+# [GET] /api/file/read
+@app.get("/api/file/read")
+async def read_file(background_tasks: BackgroundTasks, path: list[str] = Query(...)):
+    paths = set(path)
+
+    nonexistent_files = []
+    for p in paths:
+        file_path = secure_path(p)
+        if not file_path.exists():
+            nonexistent_files.append(p)
+            continue
+
+    if len(nonexistent_files) > 0:
+        return JSONResponse(status_code=404,  content={"message": "Files not found", "files": nonexistent_files})
+
+    if len(paths) == 0:
+        raise HTTPException(status_code=400, detail="Paths not provided in request")
+    elif len(paths) == 1 and secure_path(path[0]).is_file():
+        return read_single_file(paths.pop())
+    else:
+        return read_multiple_files(paths)
+
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+
+    with open(file_path, "rb") as file:
+        return {"content": file.read()}
+
+def read_single_file(path: str, background_tasks: BackgroundTasks):
+    file_path = secure_path(path)
+    with open(file_path, "rb") as file:
+        if file_path.stat().st_size < BUFFER_SIZE:
+            return Response(file_unbuffered(file_path), media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_path.name}'})
+        
+        if file_path.stat().st_size < MAX_UNCOMPRESSED_SIZE:
+            return StreamingResponse(content=file_stream(file_path), media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_path.name}'})
+
+
+        return read_multiple_files(set(path))
+
+def file_unbuffered(file_path: str):
+    with open(file_path, "rb") as file:
+        return file.read()
+
+
+def file_stream(file_path: str):
+    with open(file_path, "rb") as file:
+        while True:
+            chunk = file.read(BUFFER_SIZE)
+            if not chunk:
+                break
+            yield chunk
+
+
+def read_multiple_files(paths: set[str], background_tasks: BackgroundTasks):
+    paths = [secure_path(p) for p in paths]
+
+
+    zbuf = BytesIO()
+    arcname = f'NextFileManager-{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    with zipfile.ZipFile(secure_path(zbuf, "w", zipfile.ZIP_DEFLATED)) as zf:
+        for file_path in paths:
+            if not os.path.exists(file_path):
+                raise HTTPException(status_code=404, detail="File deleted during compression")
+            zf.write(file_path, arcname=arcname)
+
+            if zbuf.tell() > MAX_ZIP_MEMORY_SIZE:
+                zf.close()
+
+                temp_file_path = secure_path(f'/tmp/{arcname}.zip')
+                background_tasks.add_task(delete_after_request, temp_file_path)
+                with open(temp_file_path, 'wb') as f:
+                    f.write(zbuf.getvalue())
+
+
+                    # Return zip file stream
+                    return StreamingResponse(open(temp_file_path, 'rb'), media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={arcname}.zip'})
+    
+    # Return memory buffer stream
+    zbuf.seek(0)
+    return StreamingResponse(zbuf, media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={arcname}.zip'})
+    
+
 
 # Required to be parsed as a list instead of query parameter
 class DirectoryRequest(BaseModel):
@@ -233,6 +324,12 @@ def get_file_info(file_path: Path):
             "mime_type": "inode/directory" if file_path.is_dir() else mime.from_file(str(file_path)) if file_path.is_file() else "unknown", 
             "size": file_path.stat().st_size,
     }
+
+def delete_after_request(file_path):
+    try:
+        file_path.unlink()
+    except Exception as e:
+        print(f"Unable to delete file: {str(e)}")
 
 
 # Return 'message' instead of 'detail' for all HTTPExceptions to be interpreted by frontend

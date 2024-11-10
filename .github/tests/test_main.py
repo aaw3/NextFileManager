@@ -1,12 +1,12 @@
 from fastapi.testclient import TestClient
 from app import app
+from app import ROOT_DIRECTORY as ud
 import os
 import shutil
 
 client = TestClient(app)
 
 # Create tests to verify API endpoints in app.py are working
-ud = "uploads"
 
 def test_read_directories():
     dir_0 = "d0"
