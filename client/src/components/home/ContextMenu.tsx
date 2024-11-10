@@ -203,7 +203,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <li>
             <button
               onClick={handleOpen}
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               {open}
             </button>
@@ -211,7 +211,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <li>
             <button
               onClick={handleRename}
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               {rename}
             </button>
@@ -219,7 +219,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <li>
             <button
               onClick={confirmDelete}
-              className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
             </button>
