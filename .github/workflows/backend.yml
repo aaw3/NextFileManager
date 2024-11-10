@@ -29,6 +29,9 @@ jobs:
         run: pip install -r requirements.txt
         working-directory: .
 
+      - name: Create uploads directory
+        run: mkdir -p uploads  # Create the uploads directory
+
       - name: Run tests
         run: PYTHONPATH=. pytest -v ./.github/tests
         working-directory: ${{ github.workspace }}
