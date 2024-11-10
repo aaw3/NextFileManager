@@ -30,6 +30,5 @@ jobs:
         working-directory: .
 
       - name: Run tests
-        run: |
-    PYTHONPATH=. pytest ./.github/tests
-  working-directory: ${{ github.workspace }}
+        run: PYTHONPATH=. pytest ./.github/tests
+        working-directory: ${{ github.workspace }}
