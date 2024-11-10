@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException, Body, Query
+from fastapi import FastAPI, HTTPException, Body, Query, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
 import magic
 from typing import Annotated, Optional, List
 from fastapi.middleware.cors import CORSMiddleware
+from http import HTTPStatus
 
 app = FastAPI()
 
@@ -81,6 +83,7 @@ async def list_file(path: list[str] = Query(...)):
         if not file_path.exists() or not file_path.is_file():
             files_info[p] = None
             #raise HTTPException(status_code=404, detail="Directory not found")
+            continue
 
         files_info[p] = get_file_info(file_path)
         
@@ -108,7 +111,10 @@ async def create_directory(request: DirectoryRequest, verbose: Optional[bool] = 
         try:
             directory.mkdir(parents=True, exist_ok=False)
         except FileExistsError:
-            successful_paths.append(p)
+            if (directory.is_file()):
+                failed_paths.append(p)
+            elif (directory.is_dir()):
+                successful_paths.append(p)
             continue
             #raise HTTPException(status_code=400, detail="Directory already exists")
         except Exception as e:
@@ -116,7 +122,7 @@ async def create_directory(request: DirectoryRequest, verbose: Optional[bool] = 
             #raise HTTPException(status_code=500, detail=str(e))
         successful_paths.append(p)
 
-    return generate_response(successful_paths, failed_paths, "Directories created", verbose)
+    return JSONResponse(**generate_response(successful_paths, failed_paths, "Directories created", verbose))
 
 # [PATCH] /api/file
 @app.patch("/api/file")
@@ -143,7 +149,7 @@ async def rename_file(files: dict[str, str], verbose: Optional[bool] = Query(Fal
 
         successful_paths[old_name] = new_name
 
-    return generate_response(successful_paths, failed_paths, "Directories renamed", verbose)
+    return JSONResponse(**generate_response(successful_paths, failed_paths, "Directories renamed", verbose))
 
 # [DELETE] /api/directory
 @app.delete("/api/directory") # Must use query parameters as body is not supported in DELETE requests
@@ -169,7 +175,7 @@ async def delete_directory(path: list[str] = Query(...), verbose: Optional[bool]
             continue
         successful_paths.append(p)
 
-    return generate_response(successful_paths, failed_paths, "Directories deleted", verbose)
+    return JSONResponse(**generate_response(successful_paths, failed_paths, "Directories deleted", verbose))
 
 # [DELETE] /api/file
 @app.delete("/api/file")
@@ -197,19 +203,25 @@ async def delete_file(path: list[str] = Query(...), verbose: Optional[bool] = Qu
 
         successful_paths.append(p)
 
-    return generate_response(successful_paths, failed_paths, "Files deleted", verbose)
+    return JSONResponse(**generate_response(successful_paths, failed_paths, "Files deleted", verbose))
 
 
 # Function to determine the response
 # Will be moved to a utils library later
 def generate_response(successful_paths, failed_paths, operation, verbose):
+    http_status = HTTPStatus.OK.value
+    if len(successful_paths) == 0 and len(failed_paths) > 0:
+        http_status = HTTPStatus.BAD_REQUEST.value
+    if len(successful_paths) > 0 and len(failed_paths) > 0:
+        http_status = HTTPStatus.MULTI_STATUS.value
+
     if verbose:
-        return {"message": str(len(successful_paths)) + " " + operation + " successfully", "paths": {"success": successful_paths, "fail": failed_paths}}
+        return {"status_code": http_status, "content": {"message": str(len(successful_paths)) + " " + operation + " successfully", "paths": {"success": successful_paths, "fail": failed_paths}}}
 
     if (len(failed_paths) > 0):
-        return {"message": str(len(successful_paths)) + " " + operation + " successfully", "failed": failed_paths}
+        return {"status_code": http_status, "content": {"message": str(len(successful_paths)) + " " + operation + " successfully", "failed": failed_paths}}
     
-    return {"message": str(len(successful_paths)) + " " + operation + " successfully"}
+    return {"status_code": http_status, "content": {"message": str(len(successful_paths)) + " " + operation + " successfully"}}
 
 
 def get_file_info(file_path: Path):
@@ -221,3 +233,12 @@ def get_file_info(file_path: Path):
             "mime_type": "inode/directory" if file_path.is_dir() else mime.from_file(str(file_path)) if file_path.is_file() else "unknown", 
             "size": file_path.stat().st_size,
     }
+
+
+# Return 'message' instead of 'detail' for all HTTPExceptions to be interpreted by frontend
+@app.exception_handler(HTTPException)
+def custom_http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"message": exc.detail}  # Change "detail" to "message"
+    )
