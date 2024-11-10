@@ -30,5 +30,4 @@ jobs:
         working-directory: .
 
       - name: Run tests
-        run: pytest
-        working-directory: ./.github
+        run: PYTHONPATH=$PWD pytest ./.github/tests
