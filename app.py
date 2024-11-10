@@ -99,7 +99,19 @@ async def list_file(path: list[str] = Query(...)):
 
 # [GET] /api/file/read
 @app.get("/api/file/read")
-async def read_file(background_tasks: BackgroundTasks, path: list[str] = Query(...)):
+async def read_file(background_tasks: BackgroundTasks,  path: list[str] = Query(...), nodl: Optional[bool] = Query(False)):
+    """
+        Read file from the server and return it as a Response or StreamingResponse
+
+        Args:
+            background_tasks (BackgroundTasks): Background task to delete temporary files after request
+            path (list[str] = Query(...)): List of paths to read
+            nodl (Optional[bool] = Query(False)): Return file without attachment header so it can be opened in the browser
+
+        Retruns:
+            Response: File content as a Response or Streaming
+    """
+    
     paths = set(path)
 
     nonexistent_files = []
@@ -115,21 +127,38 @@ async def read_file(background_tasks: BackgroundTasks, path: list[str] = Query(.
     if len(paths) == 0:
         raise HTTPException(status_code=400, detail="Paths not provided in request")
     elif len(paths) == 1 and secure_path(path[0]).is_file():
-        return read_single_file(paths.pop())
+        return read_single_file(paths.pop(), nodl, background_tasks)
     else:
-        return read_multiple_files(paths)
+        return read_multiple_files(paths, background_tasks)
 
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(status_code=404, detail="File not found")
 
-    with open(file_path, "rb") as file:
-        return {"content": file.read()}
+    return read_single_file(file_path, nodl, background_tasks)
 
-def read_single_file(path: str, background_tasks: BackgroundTasks):
+def read_single_file(path: str, nodl: bool, background_tasks: BackgroundTasks):
+    """
+        Read a single file from the server and return it as a Response or StreamingResponse
+
+        Uses file size to determine if the file should be returned as a Response or StreamingResponse and if it should be compressed
+
+        Args:
+            path (str): Path to read
+            nodl (bool): Return file without attachment header so it can be opened in the browser
+            background_tasks (BackgroundTasks): Background task to delete temporary files after request
+
+        Returns:
+            Response: File content as a Response or StreamingResponse
+    """
+
     file_path = secure_path(path)
     with open(file_path, "rb") as file:
         if file_path.stat().st_size < BUFFER_SIZE:
-            return Response(file_unbuffered(file_path), media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_path.name}'})
+            if nodl:
+                return Response(content=file_unbuffered(file_path), media_type=mime.from_file(str(file_path)))
+            else:
+                return Response(content=file_unbuffered(file_path), media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_path.name}'})
+                # Return Response with mime type so it can be opened by the browser
         
         if file_path.stat().st_size < MAX_UNCOMPRESSED_SIZE:
             return StreamingResponse(content=file_stream(file_path), media_type='application/octet-stream', headers={'Content-Disposition': f'attachment; filename={file_path.name}'})
@@ -138,11 +167,31 @@ def read_single_file(path: str, background_tasks: BackgroundTasks):
         return read_multiple_files(set(path))
 
 def file_unbuffered(file_path: str):
+    """
+        Read file from the server and return it as a Response
+
+        Args:
+            file_path (str): Path to read
+
+        Returns:
+            bytes: File content
+    """
     with open(file_path, "rb") as file:
         return file.read()
 
 
 def file_stream(file_path: str):
+    """
+        Read file from the server and return it as a StreamingResponse
+
+        Args:
+            file_path (str): Path to read
+
+        Returns:
+            Generator: File content
+    """
+
+
     with open(file_path, "rb") as file:
         while True:
             chunk = file.read(BUFFER_SIZE)
@@ -152,6 +201,17 @@ def file_stream(file_path: str):
 
 
 def read_multiple_files(paths: set[str], background_tasks: BackgroundTasks):
+    """
+        Read multiple files from the server and return them as a Response or StreamingResponse
+
+        Args:
+            paths (set[str]): Paths to read
+            background_tasks (BackgroundTasks): Background task to delete temporary files after request
+
+        Returns:
+            Response: File content as a Response or StreamingResponse
+    """
+
     paths = [secure_path(p) for p in paths]
 
 

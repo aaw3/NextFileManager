@@ -1,10 +1,12 @@
 from fastapi.testclient import TestClient
-from app import app
+import app
+from app import app, BUFFER_SIZE, MAX_UNCOMPRESSED_SIZE, MAX_ZIP_MEMORY_SIZE
 from app import ROOT_DIRECTORY as ud
 import os
 import shutil
 
 client = TestClient(app)
+
 
 # Create tests to verify API endpoints in app.py are working
 
@@ -12,7 +14,7 @@ def test_read_directories():
     dir_0 = "d0"
     dir_1 = "d1"
     mkdir(dir_0, dir_1)
-    response = client.get(f"/api/directory?path={dir_0}&path={dir_1}")
+    response = client.get(f"/api/directory", params={"path": [dir_0, dir_1]})
     assert response.status_code == 200
     assert response.json() is not None
     assert 'directories' in response.json()
@@ -25,7 +27,7 @@ def test_read_directories():
 def test_create_directories():
     dir_to_create1 = "create_dir0"
     dir_to_create2 = "create_dir1"
-    response = client.post("/api/directory?verbose=True", json={"path": [dir_to_create1, dir_to_create2]})
+    response = client.post("/api/directory", json={"path": [dir_to_create1, dir_to_create2]}, params={"verbose": True})
     assert response.status_code == 200
     assert all(d in response.json()['paths']['success'] for d in [dir_to_create1, dir_to_create2])
     try:
@@ -38,14 +40,14 @@ def test_create_directories():
 # Directory out of bounds check
 def test_create_directory_oob_fail():
     dir_to_create = "create_dir0"
-    response = client.post("/api/directory?verbose=True", json={"path": [f"../{dir_to_create}"]})
+    response = client.post("/api/directory", json={"path": [f"../{dir_to_create}"]}, params={"verbose": True})
     assert response.status_code == 403 # Forbidden accessing out of user scope
 
 # Trying to create a directory with same name as a file
 def test_create_directory_file_exists_fail():
     file_to_create = "create_file0"
     mkfile((file_to_create, ""))
-    response = client.post("/api/directory?verbose=True", json={"path": [file_to_create]})
+    response = client.post("/api/directory", json={"path": [file_to_create]}, params={"verbose": True})
     assert response.status_code == 400
     assert file_to_create in response.json()['paths']['fail']
     #rmfile(file_to_create)
@@ -54,7 +56,7 @@ def test_multistatus_response():
     file_to_create = "create_file0"
     dir_to_create = "create_dir0"
     mkfile((file_to_create, ""))
-    response = client.post("/api/directory?verbose=True", json={"path": [file_to_create, dir_to_create]})
+    response = client.post("/api/directory", json={"path": [file_to_create, dir_to_create]}, params={"verbose": True})
     assert response.status_code == 207
     assert file_to_create in response.json()['paths']['fail']
     assert dir_to_create in response.json()['paths']['success']
@@ -63,7 +65,7 @@ def test_multistatus_response():
 
 def test_read_directory_fail():
     dir_to_check = 'does_not_exist'
-    response = client.get(f"/api/directory?path={dir_to_check}")
+    response = client.get(f"/api/directory", params={"path": [dir_to_check]})
     assert response.json() == {"directories": {}}
 
 
