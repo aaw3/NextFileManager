@@ -10,6 +10,7 @@ from http import HTTPStatus
 import zipfile
 from datetime import datetime
 from io import BytesIO
+import tempfile
 
 app = FastAPI()
 
@@ -216,28 +217,29 @@ def read_multiple_files(paths: set[str], background_tasks: BackgroundTasks):
 
 
     zbuf = BytesIO()
-    arcname = f'NextFileManager-{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
-    with zipfile.ZipFile(secure_path(zbuf, "w", zipfile.ZIP_DEFLATED)) as zf:
+    zipname = f'NextFileManager-{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
+    with zipfile.ZipFile(zbuf, "w", zipfile.ZIP_DEFLATED) as zf:
         for file_path in paths:
-            if not os.path.exists(file_path):
+            if not file_path.exists():
                 raise HTTPException(status_code=404, detail="File deleted during compression")
-            zf.write(file_path, arcname=arcname)
+            zf.write(file_path, arcname=file_path.name)
 
             if zbuf.tell() > MAX_ZIP_MEMORY_SIZE:
                 zf.close()
 
-                temp_file_path = secure_path(f'/tmp/{arcname}.zip')
-                background_tasks.add_task(delete_after_request, temp_file_path)
+                tempfile.mk
+                temp_file_path = Path(tempfile.mkdtemp()) / f"{zipname}.zip"
+                background_tasks.add_task(delete_after_request, temp_file_path.parent)
                 with open(temp_file_path, 'wb') as f:
                     f.write(zbuf.getvalue())
 
 
                     # Return zip file stream
-                    return StreamingResponse(open(temp_file_path, 'rb'), media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={arcname}.zip'})
+                    return StreamingResponse(open(temp_file_path, 'rb'), media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={zipname}.zip'})
     
     # Return memory buffer stream
     zbuf.seek(0)
-    return StreamingResponse(zbuf, media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={arcname}.zip'})
+    return StreamingResponse(zbuf, media_type='application/zip', headers={'Content-Disposition': f'attachment; filename={zipname}.zip'})
     
 
 
@@ -275,14 +277,14 @@ async def create_directory(request: DirectoryRequest, verbose: Optional[bool] = 
 
     return JSONResponse(**generate_response(successful_paths, failed_paths, "Directories created", verbose))
 
-# [PATCH] /api/file
-@app.patch("/api/file")
-async def rename_file(files: dict[str, str], verbose: Optional[bool] = Query(False)):
+# [PATCH] /api/directory
+@app.patch("/api/directory")
+async def rename_file(paths: dict[str, str], verbose: Optional[bool] = Query(False)):
 
     successful_paths = {}
     failed_paths = {}
     
-    for old_name, new_name in files.items():
+    for old_name, new_name in paths.items():
         old_directory = secure_path(old_name)
         new_directory = secure_path(new_name)
 
@@ -327,6 +329,31 @@ async def delete_directory(path: list[str] = Query(...), verbose: Optional[bool]
         successful_paths.append(p)
 
     return JSONResponse(**generate_response(successful_paths, failed_paths, "Directories deleted", verbose))
+
+# [PATCH] /api/file
+@app.patch("/api/file")
+async def rename_file(paths: dict[str, str], verbose: Optional[bool] = Query(False)):
+
+    successful_paths = {}
+    failed_paths = {}
+    
+    for old_name, new_name in paths.items():
+        old_file = secure_path(old_name)
+        new_file = secure_path(new_name)
+
+        if not old_file.exists() or not old_file.is_file():
+            failed_paths[old_name] = new_name
+            continue
+        
+        try:
+            old_file.rename(new_file)
+        except Exception as e:
+            failed_paths[old_name] = new_name
+            continue
+
+        successful_paths[old_name] = new_name
+
+    return JSONResponse(**generate_response(successful_paths, failed_paths, "Files renamed", verbose))
 
 # [DELETE] /api/file
 @app.delete("/api/file")
