@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import Notification from "./Notification";
+import PDFViewer from "./PDFViewer";
 
 interface ContextMenuProps {
   fileName: string;
@@ -27,6 +28,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [showNotification, setShowNotification] = useState(false);
 
@@ -104,18 +106,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   };
   
   const handleOpen = async () => {
-    try {
-      const response = await fetch(`/api/files/${fileName}`, {
-        method: "OPEN",
-      });
-      if (response.ok) {
-        console.log(`File ${fileName} opened successfully`);
-      } else {
-        console.error("Failed to open file");
-      }
-    } catch (error) {
-      console.error("Error opening file:", error);
-    }
+    setShowPDFViewer(true);
   };
 
   const handleModify = () => {
@@ -229,6 +220,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
         </ul>
       </div>
+
+      {showPDFViewer && (
+        <PDFViewer
+        filePath={`http://127.0.0.1:8000/files/${fileName}`}
+        onClose={() => setShowPDFViewer(false)}
+        />
+      )}
+
       {showConfirmation && (
         <ConfirmationModal
           message="Are you sure you want to delete this file?"
