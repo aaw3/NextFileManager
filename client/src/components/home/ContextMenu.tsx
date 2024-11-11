@@ -72,7 +72,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         }
       );
       if (response.ok) {
-        showNotificationMessage(`File ${fileName} deleted successfully`);
+        showNotificationMessage(`File "${fileName}" deleted successfully`);
         refreshData();
       } else {
         console.error("Failed to delete file");
@@ -95,7 +95,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         }
       );
       if (response.ok) {
-        showNotificationMessage(`Directory ${fileName} deleted successfully`);
+        showNotificationMessage(`Directory "${fileName}" deleted successfully`);
         refreshData();
       } else {
         console.error("Failed to delete directory");
@@ -112,7 +112,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         method: "OPEN",
       });
       if (response.ok) {
-        console.log(`File ${fileName} opened successfully`);
+        console.log(`File "${fileName}" opened successfully`);
       } else {
         console.error("Failed to open file");
       }
@@ -136,7 +136,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           }),
         });
         if (response.ok) {
-          showNotificationMessage(`File ${fileName} renamed to ${newName} successfully`);
+          showNotificationMessage(`File "${fileName}" renamed to ${newName} successfully`);
           setShowNotification(true);
           refreshData();
         } else {
