@@ -62,7 +62,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     setTimeout(() => setShowNotification(true), 0); 
   };
 
-  // DELETE FILE
   const handleDeleteFile = async () => {
     try {
       const response = await fetch(
@@ -85,7 +84,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  // DELETE DIRECTORY
   const handleDeleteDirectory = async () => {
     try {
       const response = await fetch(
@@ -107,8 +105,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       console.error("Error deleting directory:", error);
     }
   };
-
-  // OPEN
+  
   const handleOpen = async () => {
     try {
       const response = await fetch(`/api/files/${fileName}`, {
@@ -124,15 +121,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  // RENAME
-=======
-      console.error("Error openingß file:", error);
-    }
-  };
-
   const handleModify = () => {
     console.log(`Modifying file: ${fileName}`);
   };
+
   const handleRename = async () => {
     const newName = prompt("Enter new file name:");
     if (newName) {
