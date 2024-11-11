@@ -219,10 +219,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             </button>
           </li>
           <li>
-            <button
+          <button
               onClick={confirmDelete}
-
-              className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
+              className="flex items-center w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
             >
               <i className="material-icons text-sm mr-2">delete</i>
               {onDelete}
