@@ -1,6 +1,6 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import ContextMenu from "./ContextMenu";
+import PDFViewer from "./PDFViewer";
 
 interface RecentFileCardProps {
   file: {
@@ -19,8 +19,11 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
   file,
   isOpen,
   toggleMenu,
-  refreshData
+  refreshData,
 }) => {
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
+  const [currentFilePath, setCurrentFilePath] = useState<string>("");
+
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
     return date.toLocaleDateString("en-US", {
@@ -36,12 +39,26 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
     return filename.replace(/\.[^/.]+$/, "");
   };
 
+  const handleCardDoubleClick = () => {
+    if (file.mime_type === "application/pdf") {
+      setCurrentFilePath(
+        `http://127.0.0.1:8000/files/${encodeURIComponent(file.fileName)}`
+      );
+      setShowPDFViewer(true);
+    } else {
+      console.log(`Double-clicked on: ${file.fileName}`);
+    }
+  };
+
   return (
     <div className="relative">
-      <div className="bg-white border border-gray-300 dark:border-none rounded-lg p-3 dark:bg-gray-800 flex flex-col">
+      <div
+        className="bg-white border border-gray-300 dark:border-none rounded-lg p-3 dark:bg-gray-800 flex flex-col cursor-pointer"
+        onDoubleClick={handleCardDoubleClick}
+      >
         <div className="w-full h-36 mb-2 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
           <img
-            src={file.imagepath || "/path/to/placeholder-image.png"}
+            src={file.imagepath}
             className="w-full h-full object-cover dark:bg-gray-600"
           />
         </div>
@@ -71,6 +88,13 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
           </span>
         </div>
       </div>
+
+      {showPDFViewer && (
+        <PDFViewer
+          filePath={currentFilePath}
+          onClose={() => setShowPDFViewer(false)}
+        />
+      )}
     </div>
   );
 };
