@@ -1,3 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modal-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+.modal-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+iframe::-webkit-scrollbar {
+    width: 8px;
+}
+
+iframe::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+iframe::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+iframe::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+  
