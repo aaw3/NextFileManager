@@ -59,7 +59,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     setTimeout(() => setShowNotification(true), 0); 
   };
 
-  // DELETE FILE
   const handleDeleteFile = async () => {
     try {
       const response = await fetch(
@@ -72,7 +71,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         }
       );
       if (response.ok) {
-        showNotificationMessage(`File "${fileName}" deleted successfully`);
+        showNotificationMessage(`File ${fileName} deleted successfully`);
         refreshData();
       } else {
         console.error("Failed to delete file");
@@ -82,7 +81,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  // DELETE DIRECTORY
   const handleDeleteDirectory = async () => {
     try {
       const response = await fetch(
@@ -95,7 +93,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         }
       );
       if (response.ok) {
-        showNotificationMessage(`Directory "${fileName}" deleted successfully`);
+        showNotificationMessage(`Directory ${fileName} deleted successfully`);
         refreshData();
       } else {
         console.error("Failed to delete directory");
@@ -104,15 +102,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       console.error("Error deleting directory:", error);
     }
   };
-
-  // OPEN
+  
   const handleOpen = async () => {
     try {
       const response = await fetch(`/api/files/${fileName}`, {
         method: "OPEN",
       });
       if (response.ok) {
-        console.log(`File "${fileName}" opened successfully`);
+        console.log(`File ${fileName} opened successfully`);
       } else {
         console.error("Failed to open file");
       }
@@ -121,7 +118,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  // RENAME
+  const handleModify = () => {
+    console.log(`Modifying file: ${fileName}`);
+  };
+
   const handleRename = async () => {
     const newName = prompt("Enter new file name:", fileName);
     if (newName) {
@@ -136,7 +136,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           }),
         });
         if (response.ok) {
-          showNotificationMessage(`File "${fileName}" renamed to ${newName} successfully`);
+          showNotificationMessage(`File ${fileName} renamed to ${newName} successfully`);
           setShowNotification(true);
           refreshData();
         } else {
@@ -219,9 +219,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             </button>
           </li>
           <li>
-          <button
-              onClick={handleOpen}
-              className="flex items-center w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
+            <button
+              onClick={confirmDelete}
+
+              className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               <i className="material-icons text-sm mr-2">delete</i>
               {onDelete}
@@ -229,7 +230,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
         </ul>
       </div>
-
       {showConfirmation && (
         <ConfirmationModal
           message="Are you sure you want to delete this file?"

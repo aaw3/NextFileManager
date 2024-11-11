@@ -68,7 +68,7 @@ const RecentFilesTable: React.FC<RecentFilesTableProps> = ({ files, refreshData 
             >
               <td className="p-3 dark:text-gray-300 flex items-center">
               <img src = {file.imagepath || "/images/placeholder.png"} className="p-3 bg-white rounded-md ml-2 mr-2 my-1 h-4 w-4"></img>
-                {file.fileName}
+                {removeFileExtension(file.fileName)}
               </td>
               <td className="p-3 dark:text-gray-300">
                 {formatDate(file.modified)}
