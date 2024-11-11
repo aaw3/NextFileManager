@@ -279,7 +279,7 @@ async def create_directory(request: DirectoryRequest, verbose: Optional[bool] = 
 
 # [PATCH] /api/directory
 @app.patch("/api/directory")
-async def rename_file(paths: dict[str, str], verbose: Optional[bool] = Query(False)):
+async def rename_directory(paths: dict[str, str], verbose: Optional[bool] = Query(False)):
 
     successful_paths = {}
     failed_paths = {}
@@ -290,6 +290,10 @@ async def rename_file(paths: dict[str, str], verbose: Optional[bool] = Query(Fal
 
         if not old_directory.exists() or not old_directory.is_dir():
             #raise HTTPException(status_code=404, detail="Directory not found")
+            failed_paths[old_name] = new_name
+            continue
+
+        if new_directory.exists():
             failed_paths[old_name] = new_name
             continue
         
@@ -342,6 +346,11 @@ async def rename_file(paths: dict[str, str], verbose: Optional[bool] = Query(Fal
         new_file = secure_path(new_name)
 
         if not old_file.exists() or not old_file.is_file():
+            failed_paths[old_name] = new_name
+            continue
+
+
+        if new_file.exists():
             failed_paths[old_name] = new_name
             continue
         
