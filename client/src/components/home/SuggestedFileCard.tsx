@@ -58,7 +58,7 @@ const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({
       >
         <div className="flex items-center space-x-4">
           <img
-            src={file.imagepath || "/images/placeholder.png"}
+            src={file.imagepath}
             className="w-12 h-12 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-600 object-cover rounded-lg flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
