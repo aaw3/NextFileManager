@@ -1,53 +1,76 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import ContextMenu from "./ContextMenu";
+import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
-interface FileCardProps {
+interface SuggestedFileCardProps {
   file: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;
-    mime: string;
+    mime_type: string;
   };
+  refreshData: () => void;
 }
 
-const FileCard: React.FC<FileCardProps> = ({ file }) => {
+const SuggestedFileCard: React.FC<SuggestedFileCardProps> = ({ file, refreshData }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
     return date.toLocaleDateString("en-US", {
-      weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   };
 
-  const removeFileExtension = (filename: string) => {
-    return filename.replace(/\.[^/.]+$/, "");
+  const removeFileExtension = (fileName: string) => {
+    if (!fileName) return "Unnamed File";
+    return fileName.replace(/\.[^/.]+$/, "");
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <Link
-      to="/"
-      className="bg-white rounded-lg shadow-md p-4 dark:bg-gray-800 flex items-center space-x-4 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200"
-    >
-      <img
-        src={file.imagepath || "/images/placeholder.png"}
-        className="w-12 h-12 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-600 object-cover rounded-lg flex-shrink-0"
-      />
-      <div className="flex-1 min-w-0">
-        <h3
-          className="font-semibold text-sm sm:text-sm md:text-md dark:text-white truncate"
-          title={file.name}
-        >
-          {removeFileExtension(file.name)}
-        </h3>
-        <p className="text-xs sm:text-xxs dark:text-gray-400 mt-1">
-          {formatDate(file.modified)}
-        </p>
+    <div className="relative bg-white rounded-lg shadow-md p-4 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-200">
+      <Link
+        to="/"
+        className="flex items-center space-x-4"
+      >
+        <img
+          src={file.imagepath || "/images/placeholder.png"}
+          className="w-12 h-12 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-600 object-cover rounded-lg flex-shrink-0"
+        />
+        <div className="flex-1 min-w-0">
+          <h3
+            className="font-semibold text-sm sm:text-sm md:text-md dark:text-white truncate"
+            title={file.fileName}
+          >
+            {removeFileExtension(file.fileName)}
+          </h3>
+          <p className="text-xs sm:text-xxs dark:text-gray-400 mt-1">
+            {formatDate(file.modified)}
+          </p>
+        </div>
+      </Link>
+      <div className="absolute top-[20px] right-4">
+        <ContextMenu
+          fileName={file.fileName}
+          open="Open"
+          rename="Rename"
+          onDelete="Delete"
+          mime_type={file.mime_type}
+          isOpen={isMenuOpen}
+          toggleMenu={toggleMenu}
+          refreshData={refreshData}
+        />
       </div>
-    </Link>
+    </div>
   );
 };
 
-export default FileCard;
+export default SuggestedFileCard;

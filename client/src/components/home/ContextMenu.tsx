@@ -1,26 +1,37 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import ConfirmationModal from "./ConfirmationModal";
+import Notification from "./Notification";
+
 
 interface ContextMenuProps {
   fileName: string;
   open: string;
-  modify: string;
+
   onDelete: string;
   rename: string;
+  mime_type: string;
   isOpen: boolean;
   toggleMenu: () => void;
+  refreshData: () => void;
 }
 
 const ContextMenu: React.FC<ContextMenuProps> = ({
   fileName,
   open,
-  modify,
   onDelete,
   rename,
+  mime_type,
   isOpen,
   toggleMenu,
+  refreshData,
+
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,13 +56,27 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     };
   }, [isOpen, toggleMenu]);
 
-  const handleDelete = async () => {
+  const showNotificationMessage = (message: string) => {
+    setNotificationMessage(message);
+    setShowNotification(false); 
+    setTimeout(() => setShowNotification(true), 0); 
+  };
+
+  // DELETE FILE
+  const handleDeleteFile = async () => {
     try {
-      const response = await fetch(`/api/files/${fileName}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/file?path=${encodeURIComponent(fileName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.ok) {
-        console.log(`File ${fileName} deleted successfully`);
+        showNotificationMessage(`File ${fileName} deleted successfully`);
+        refreshData();
       } else {
         console.error("Failed to delete file");
       }
@@ -60,17 +85,47 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
+  // DELETE DIRECTORY
+  const handleDeleteDirectory = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/directory?path=${encodeURIComponent(fileName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.ok) {
+        showNotificationMessage(`Directory ${fileName} deleted successfully`);
+        refreshData();
+      } else {
+        console.error("Failed to delete directory");
+      }
+    } catch (error) {
+      console.error("Error deleting directory:", error);
+    }
+  };
+
+  // OPEN
   const handleOpen = async () => {
     try {
       const response = await fetch(`/api/files/${fileName}`, {
         method: "OPEN",
       });
       if (response.ok) {
-        console.log(`File ${fileName} openedsuccessfully`);
+        console.log(`File ${fileName} opened successfully`);
       } else {
         console.error("Failed to open file");
       }
     } catch (error) {
+      console.error("Error opening file:", error);
+    }
+  };
+
+  // RENAME
+=======
       console.error("Error openingß file:", error);
     }
   };
@@ -82,22 +137,44 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     const newName = prompt("Enter new file name:");
     if (newName) {
       try {
-        const response = await fetch(`/api/files/${fileName}/rename`, {
-          method: "POST",
+        const response = await fetch(`http://127.0.0.1:8000/api/file`, {
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ newName }),
+          body: JSON.stringify({
+            [fileName]: newName,
+          }),
         });
         if (response.ok) {
-          console.log(`File ${fileName} renamed to ${newName} successfully`);
+          showNotificationMessage(`File ${fileName} renamed to ${newName} successfully`);
+          setShowNotification(true);
+          refreshData();
         } else {
-          console.error("Failed to rename file");
+          const errorData = await response.json();
+          console.error("Failed to rename file:", errorData.details || response.statusText);
         }
       } catch (error) {
         console.error("Error renaming file:", error);
       }
     }
+  };
+
+  const confirmDelete = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setShowConfirmation(false);
+    if (mime_type === "inode/directory") {
+      handleDeleteDirectory();
+    } else {
+      handleDeleteFile();
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmation(false);
   };
 
   return (
@@ -133,7 +210,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           !isOpen ? "hidden" : ""
         }`}
       >
-        <ul className="">
+        <ul>
           <li>
             <button
               onClick={handleOpen}
@@ -152,15 +229,8 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
           <li>
             <button
-              onClick={handleModify}
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b border-gray-200 dark:border-gray-700"
-            >
-              {modify}
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={handleDelete}
+              onClick={confirmDelete}
+
               className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
@@ -168,6 +238,20 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
         </ul>
       </div>
+      {showConfirmation && (
+        <ConfirmationModal
+          message="Are you sure you want to delete this file?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      )}
+
+      {showNotification && (
+        <Notification
+          message={notificationMessage}
+          onClose={() => setShowNotification(false)}
+        />
+      )}
     </div>
   );
 };

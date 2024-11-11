@@ -1,5 +1,6 @@
-from fastapi import FastAPI, HTTPException, Body, Query, Request, BackgroundTasks
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi import FastAPI, HTTPException, Body, Query
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Annotated, Optional, List
 from pydantic import BaseModel
 from pathlib import Path
 import shutil
@@ -284,11 +285,11 @@ async def rename_directory(paths: dict[str, str], verbose: Optional[bool] = Quer
     successful_paths = {}
     failed_paths = {}
     
-    for old_name, new_name in paths.items():
-        old_directory = secure_path(old_name)
-        new_directory = secure_path(new_name)
+    for old_name, new_name in files.items():
+        old_path = secure_path(old_name)
+        new_path = secure_path(new_name)
 
-        if not old_directory.exists() or not old_directory.is_dir():
+        if not old_path.exists() or not old_path.exists():
             #raise HTTPException(status_code=404, detail="Directory not found")
             failed_paths[old_name] = new_name
             continue
@@ -298,7 +299,7 @@ async def rename_directory(paths: dict[str, str], verbose: Optional[bool] = Quer
             continue
         
         try:
-            old_directory.rename(new_directory)
+            old_path.rename(new_path)
         except Exception as e:
             #raise HTTPException(status_code=500, detail=str(e))
             failed_paths[old_name] = new_name

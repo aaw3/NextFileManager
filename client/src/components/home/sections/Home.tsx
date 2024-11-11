@@ -1,18 +1,19 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useCallback} from "react";
 import LoadingIndicator from "../../../components/home/LoadingIndicator";
 import ErrorDisplay from "../../../components/home/ErrorDisplay";
 import SuggestedFilesGrid from "../../../components/home/SuggestedFilesGrid";
 import RecentFilesGrid from "../../../components/home/RecentFileGrid";
 import RecentFilesTable from "../../../components/home/RecentFilesTable";
 import ButtonGroup from "../../../components/home/ButtonGroup";
-import { getFilesFromAPI } from "../../../data/apiService";
+import axios from "axios";
 
 interface File {
-  name: string;
+  fileName: string;
   created: string;
   modified: string;
   imagepath: string;
-  mime: string;
+  mime_type: string;
+  size: number;
 }
 
 interface APIResponse {
@@ -25,19 +26,34 @@ const Home: FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<number>(2);
 
+  const fetchData = useCallback(() => {
+    setLoading(true);
+    axios
+      .get("http://127.0.0.1:8000/api/directory", {
+        params: {
+          path: ".",
+        },
+      })
+      .then((response) => {
+        const directories = response.data.directories;
+        const requestedPath = ".";
+        if (directories && Array.isArray(directories[requestedPath])) {
+          setFiles(directories[requestedPath]);
+        } else {
+          setFiles([]);
+          setError("Unexpected response format.");
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Failed to fetch files.");
+        setLoading(false);
+      });
+  }, []); 
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result: APIResponse = await getFilesFromAPI();
-        setFiles(result.files);
-        setLoading(false);
-      } catch (error) {
-        setError("Failed to fetch data");
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -55,7 +71,7 @@ const Home: FC = () => {
     <div>
       <section className="px-6">
         <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">For you</h2>
-        <SuggestedFilesGrid files={files} />
+        <SuggestedFilesGrid files={files} refreshData={fetchData} />
       </section>
       <section className="px-6">
         <div className="mb-4 flex justify-between items-center">
@@ -64,7 +80,7 @@ const Home: FC = () => {
             <ButtonGroup activeView={view} onChangeView={setView} />
           </div>
         </div>
-        {view === 1 ? <RecentFilesGrid files={files} /> : <RecentFilesTable files={files} />}
+        {view === 1 ? <RecentFilesGrid files={files} refreshData={fetchData} /> : <RecentFilesTable files={files} refreshData={fetchData} />}
       </section>
     </div>
   );

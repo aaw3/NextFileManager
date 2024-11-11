@@ -4,20 +4,22 @@ import ContextMenu from "./ContextMenu";
 
 interface RecentFileCardProps {
   file: {
-    name: string;
+    fileName: string;
     created: string;
     modified: string;
     imagepath: string;
-    mime: string;
+    mime_type: string;
   };
   isOpen: boolean;
   toggleMenu: () => void;
+  refreshData: () => void;
 }
 
 const RecentFileCard: React.FC<RecentFileCardProps> = ({
   file,
   isOpen,
   toggleMenu,
+  refreshData
 }) => {
   const formatDate = (epoch: string) => {
     const date = new Date(parseInt(epoch) * 1000);
@@ -30,6 +32,7 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
   };
 
   const removeFileExtension = (filename: string) => {
+    if (!filename) return "";
     return filename.replace(/\.[^/.]+$/, "");
   };
 
@@ -39,25 +42,26 @@ const RecentFileCard: React.FC<RecentFileCardProps> = ({
         <div className="w-full h-36 mb-2 bg-gray-200 dark:bg-gray-600 rounded-lg overflow-hidden">
           <img
             src={file.imagepath || "/path/to/placeholder-image.png"}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover dark:bg-gray-600"
           />
         </div>
 
         <div className="flex justify-between items-center">
           <h3
             className="font-bold text-sm text-gray-900 dark:text-white truncate"
-            title={file.name}
+            title={file.fileName}
           >
-            {removeFileExtension(file.name)}
+            {removeFileExtension(file.fileName)}
           </h3>
           <ContextMenu
-            fileName={file.name}
+            fileName={file.fileName}
             open="Open"
             rename="Rename"
-            modify="Modify"
             onDelete="Delete"
+            mime_type={file.mime_type}
             isOpen={isOpen}
             toggleMenu={toggleMenu}
+            refreshData={refreshData}
           />
         </div>
 
