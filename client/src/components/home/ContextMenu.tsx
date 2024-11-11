@@ -2,9 +2,11 @@ import React, { useRef, useEffect, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import Notification from "./Notification";
 
+
 interface ContextMenuProps {
   fileName: string;
   open: string;
+
   onDelete: string;
   rename: string;
   mime_type: string;
@@ -22,6 +24,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   isOpen,
   toggleMenu,
   refreshData,
+
 }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -122,6 +125,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   };
 
   // RENAME
+=======
+      console.error("Error openingß file:", error);
+    }
+  };
+
+  const handleModify = () => {
+    console.log(`Modifying file: ${fileName}`);
+  };
   const handleRename = async () => {
     const newName = prompt("Enter new file name:");
     if (newName) {
@@ -219,6 +230,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           <li>
             <button
               onClick={confirmDelete}
+
               className="block w-full text-left px-4 py-2 text-md text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white"
             >
               {onDelete}
@@ -226,7 +238,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
           </li>
         </ul>
       </div>
-
       {showConfirmation && (
         <ConfirmationModal
           message="Are you sure you want to delete this file?"
