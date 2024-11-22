@@ -2,6 +2,8 @@
 
 ### Cutting-Edge File Server built with **Python**, **FastAPI**, **TypeScript**, and **React**
 
+https://github.com/user-attachments/assets/a4b80ea1-6757-45da-b6ed-2aa7bb7c4981
+
 ## ✨ Get Started: 
 1. **Clone the repo** ```git clone https://github.com/aaw3/NextFileManager```
 2. **Start the backend** (should be in the root directory)
@@ -51,8 +53,6 @@ Whether you're accessing files on the go or managing permissions from a central 
 
 NextFileManager is the go-to solution for modern file management with an emphasis on flexibility, security, and ease of use.
 
-## 🎬 Demo
 
-https://github.com/user-attachments/assets/a4b80ea1-6757-45da-b6ed-2aa7bb7c4981
 
 **Happy managing!**
