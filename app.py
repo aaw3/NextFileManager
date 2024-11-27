@@ -10,6 +10,7 @@ from http import HTTPStatus
 import zipfile
 from datetime import datetime
 from io import BytesIO
+from fastapi.staticfiles import StaticFiles
 import tempfile
 
 app = FastAPI()
@@ -33,6 +34,8 @@ mime = magic.Magic(mime=True)
 # Define the root directory to restrict access
 ROOT_DIRECTORY = Path("./uploads").resolve()
 print(f"Root Directory: {ROOT_DIRECTORY}")
+app.mount("/files", StaticFiles(directory=ROOT_DIRECTORY), name="files")
+
 
 # Will be combined with user directory eventually
 def secure_path(path: str) -> Path:
